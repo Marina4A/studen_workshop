@@ -18,7 +18,9 @@ class Manager:
             'dfile': self.delete_file,
             'cpfile': self.copy_file,
             'mfile': self.move_file,
-            'rnfile': self.rename_file
+            'rnfile': self.rename_file,
+            'zdir': self.zip_directory,
+            'unzdir': self.unzip_directory
         }
 
     def menu(self):
@@ -74,6 +76,12 @@ class Manager:
         pass
 
     def rename_file(self, path, new_name):
+        pass
+
+    def zip_directory(self, path):
+        pass
+
+    def unzip_directory(self, path):
         pass
 
     def __str__(self):
