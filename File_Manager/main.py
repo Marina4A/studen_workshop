@@ -50,8 +50,13 @@ class Manager:
             json.dump(data_dict, file, indent=4)
         self.data = fr"{new_path}"
 
-    def create_directory(self, path):  # создание папки
-        pass
+    def create_directory(self, name_directory):  # создание папки
+        directory_path = os.path.join(self.data, name_directory)
+        if not os.path.exists(directory_path):
+            os.mkdir(directory_path)
+            print(f'Папка {name_directory} создана!')
+        else:
+            print(f'Папка {name_directory} уже существует!')
 
     def delete_directory(self, name_directory):  # удаление папки
         directory_path = os.path.join(self.data, name_directory)
