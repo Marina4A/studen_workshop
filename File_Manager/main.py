@@ -42,7 +42,7 @@ class Manager:
             data_dict = json.load(file)
         return fr"{data_dict['path']}"
 
-    def choose_directory(self): # изменение директории
+    def choose_directory(self):  # изменение директории
         new_path = input('Введите новую директорию: ')
         with open('settings.json', 'r', encoding='utf-8') as file:
             data_dict = json.load(file)
@@ -87,8 +87,13 @@ class Manager:
         elif not os.path.exists(file_path):
             print(f'Файла {name_file} не существует!')
 
-    def read_file(self, path):  # просмотр содержимого текстового файла
-        pass
+    def read_file(self, name_file):  # просмотр содержимого текстового файла
+        file_path = os.path.join(self.data, name_file)
+        if os.path.exists(file_path) and self.file_name_check(name_file):
+            with open(name_file, 'r', encoding='utf-8') as file:
+                file.read(name_file)
+        elif not os.path.exists(file_path):
+            print(f'Файла {name_file} не существует!')
 
     def delete_file(self, name_file):  # удаление файлов
         file_path = os.path.join(self.data, name_file)
