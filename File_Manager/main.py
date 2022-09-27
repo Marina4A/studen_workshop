@@ -1,6 +1,7 @@
 import json
 import inspect
-from os import path
+import os
+import os
 
 
 class Manager:
@@ -30,12 +31,10 @@ class Manager:
             command, *args = move.split()
             if command in self.dict_cmds.keys():
                 args_func = inspect.getfullargspec(self.dict_cmds[command])[0]
-                # print(args_func)
                 if len(args_func) - 1 == len(args):
-                    # print(len(args_func) - 1, args)
                     self.dict_cmds[command](*args)
-                # else:
-                #     print(f'Функция {command} ждет {len(args_func) - 1} аргумент(а)')
+                else:
+                    print(f'Функция {command} ждет {len(args_func) - 1} аргумент(а)')
 
     def get_directory(self):
         with open('settings.json', 'r', encoding='utf-8') as file:
@@ -54,17 +53,27 @@ class Manager:
     def create_directory(self, path):  # создание папки
         pass
 
-    def delete_directory(self, path):  # удаленин папки
-        pass
+    def delete_directory(self, name_directory):  # удаление папки
+        directory_path = os.path.join(self.data, name_directory)
+        if os.path.exists(directory_path):
+            os.rmdir(directory_path)
+            print(f'Папка {name_directory} удалена!')
+        else:
+            print(f'Папки {name_directory} не существует!')
 
     def move_directory(self, start_path, finish_path):  # перемещение между папками
         pass
 
     def create_file(self, name_file):  # создать файл
-        self.file_name_check(name_file)
-        file = open(name_file, 'tw', encoding='utf-8')
-        file.close()
-        print('Файл создан!')
+        file_path = os.path.join(self.data, name_file)
+        if not os.path.exists(file_path) and self.file_name_check(name_file):
+            file = open(name_file, 'tw', encoding='utf-8')
+            file.close()
+            print(f'Файл, {name_file}, создан!')
+        elif os.path.exists(file_path) and self.file_name_check(name_file):
+            print(f'Файл, {name_file}, уже существует!')
+        else:
+            print('Некорректное название файла!')
 
     def write_file(self, name_file, text_file):  # запись текста в файл
         self.file_name_check(name_file)
@@ -73,11 +82,11 @@ class Manager:
         pass
 
     def delete_file(self, name_file):  # удаление файлов
-        self.file_name_check(name_file)
-        file_path = self.data + '\\' + name_file
-        if path.exists(file_path):
+        file_path = self.data + '/' + name_file
+        if os.path.exists(file_path) and self.file_name_check(name_file):
+            os.remove(file_path)
             print(f'Файл {name_file} удален!')
-        elif not path.exists(file_path):
+        elif not os.path.exists(file_path) or not self.file_name_check(name_file):
             print('Такого файла не существует!')
 
     def copy_file(self, start_path, finish_path):  # копирование файла
@@ -97,10 +106,10 @@ class Manager:
 
     def file_name_check(self, name_file):
         type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls')
-        while True:
-            if '.' in name_file and name_file.endswith(type_file) and len(name_file[:name_file.find('.')]) > 0:
-                return True
-            name_file = input('Введите корректное название файла: ')
+        if '.' in name_file and name_file.endswith(type_file) and \
+                len(name_file[:name_file.find('.')]) > 0:
+            return True
+        return False
 
     def __str__(self):
         return f'Путь файла {self.data}'
