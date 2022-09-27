@@ -91,7 +91,7 @@ class Manager:
         file_path = os.path.join(self.data, name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
             with open(name_file, 'r', encoding='utf-8') as file:
-                file.read(name_file)
+                print(file.read())
         elif not os.path.exists(file_path):
             print(f'Файла {name_file} не существует!')
 
