@@ -1,3 +1,4 @@
+import copy
 import json
 import inspect
 import shutil
@@ -105,36 +106,12 @@ class Manager:
             print('Такого файла не существует!')
 
     def copy_file(self):  # копирование файла
-        while True:
-            name_directory, name_file = input(f'Введите папку и файл откуда/что скопировать: ').split()
-            # print(os.path.isfile(self.file_name_check(name_file)))
-            # print(os.path.isdir(os.path.join(os.getcwd(), name_directory)))
-            path_directory = os.path.join(os.getcwd(), name_directory)
-            if self.file_name_check(name_file):
-                path_file = os.path.join(path_directory, name_file)
-                # print(os.path.isfile(os.path.join(path_directory, self.file_name_check(name_file))))
-                if os.path.isfile(os.path.join(path_directory, path_file)) and \
-                        os.path.isdir(os.path.join(os.getcwd(), name_directory)):
-                    start_path = os.path.join(os.getcwd(), name_directory, name_file)
-                    break
-            elif not self.file_name_check(name_file):
-                print(f'Папки {name_directory} не существует!')
-            elif os.path.isfile(self.file_name_check(name_file)) and \
-                    not os.path.isdir(os.path.join(os.getcwd(), name_directory)):
-                print(f'Файла {name_file} не существует!')
-            else:
-                print('Некорректный ввод!')
-        while True:
-            name_directory_finish = input('Введите папку куда вставить, скопированный файл: ')
-            finish_path = os.path.join(os.getcwd(), name_directory_finish)
-            if os.path.isdir(finish_path):
-                break
-            else:
-                print('Такой папки не существует. Попробуйте еще раз!')
-        shutil.move(start_path, finish_path, copy_function=shutil.copy2)
+        start_path, finish_path = self.path_check('скопировать')
+        shutil.copy(fr'{start_path}', fr'{finish_path}')
 
-    def move_file(self, start_path, finish_path):  # перемещение файла
-        pass
+    def move_file(self):  # перемещение файла
+        start_path, finish_path = self.path_check('переместить')
+        shutil.move(fr'{start_path}', fr'{finish_path}')
 
     def rename_file(self, name_file, rename_file):  # переименование файла
         old_name_file = os.path.join(os.getcwd(), name_file)
@@ -166,8 +143,41 @@ class Manager:
         else:
             print('Некорректное название файла')
 
-    # def __str__(self):
-    #     return f'Путь файла {self.data}'
+    def path_check(self, move_file):
+        current_directory = os.path.basename(os.getcwd())
+        while True:
+            name_file_directory = input(f'Введите папку и файл откуда/что {move_file}: ').split()
+            if len(name_file_directory) > 1:
+                name_directory, name_file = name_file_directory
+                path_directory = os.path.join(os.getcwd(), name_directory)
+                if self.file_name_check(name_file):
+                    path_file = os.path.join(path_directory, name_file)
+                    if (os.path.isfile(os.path.join(path_directory, path_file)) and
+                        os.path.isdir(os.path.join(os.getcwd(), name_directory))) or \
+                            (name_directory == current_directory and
+                             os.path.isfile(os.path.join(os.getcwd(), name_file))):
+                        if current_directory == name_directory:
+                            start_path = os.path.join(os.getcwd(), name_file)
+                            break
+                        else:
+                            start_path = os.path.join(os.getcwd(), name_directory, name_file)
+                            break
+                elif not self.file_name_check(name_file):
+                    print(f'Папки {name_directory} не существует!')
+                elif os.path.isfile(self.file_name_check(name_file)) and \
+                        not os.path.isdir(os.path.join(os.getcwd(), name_directory)):
+                    print(f'Файла {name_file} не существует!')
+                else:
+                    print('Некорректный ввод!')
+        while True:
+            name_directory_finish = input('Введите папку куда вставить, скопированный файл: ')
+            if len(name_directory_finish) > 0:
+                finish_path = os.path.join(os.getcwd(), name_directory_finish)
+                if os.path.isdir(finish_path):
+                    break
+                else:
+                    print('Такой папки не существует. Попробуйте еще раз!')
+        return start_path, finish_path
 
 
 if __name__ == '__main__':
