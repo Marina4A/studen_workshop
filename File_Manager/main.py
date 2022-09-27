@@ -29,10 +29,12 @@ class Manager:
             command, *args = move.split()
             if command in self.dict_cmds.keys():
                 args_func = inspect.getfullargspec(self.dict_cmds[command])[0]
+                # print(args_func)
                 if len(args_func) - 1 == len(args):
+                    # print(len(args_func) - 1, args)
                     self.dict_cmds[command](*args)
-                else:
-                    print(f'Функция {command} ждет {len(args_func) - 1} аргумент(а)')
+                # else:
+                #     print(f'Функция {command} ждет {len(args_func) - 1} аргумент(а)')
 
     def get_directory(self):
         with open('settings.json', 'r', encoding='utf-8') as file:
@@ -48,40 +50,47 @@ class Manager:
             json.dump(data_dict, file, indent=4)
         self.data = fr"{new_path}"
 
-    def create_directory(self, path):
+    def create_directory(self, path):  # создание папки
         pass
 
-    def delete_directory(self, path):
+    def delete_directory(self, path):  # удаленин папки
         pass
 
-    def move_directory(self, start_path, finish_path):
+    def move_directory(self, start_path, finish_path):  # перемещение между папками
         pass
 
-    def create_file(self, path):
+    def create_file(self, name_file):  # создать файл
+        type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls')
+        while True:
+            if '.' in name_file and name_file.endswith(type_file) and len(name_file[:name_file.find('.')]) > 0:
+                break
+            name_file = input('Введите корректное название файла: ')
+        file = open(name_file, 'tw', encoding='utf-8')
+        file.close()
+        print('Файл создан!')
+
+    def write_file(self, path, text):  # запись текста в файл
         pass
 
-    def write_file(self, path, text):
+    def read_file(self, path):  # просмотр содержимого текстового файла
         pass
 
-    def read_file(self, path):
+    def delete_file(self, path):  # удаление файлов
         pass
 
-    def delete_file(self, path):
+    def copy_file(self, start_path, finish_path):  # копирование файла
         pass
 
-    def copy_file(self, start_path, finish_path):
+    def move_file(self, start_path, finish_path):  # перемещение файла
         pass
 
-    def move_file(self, start_path, finish_path):
+    def rename_file(self, path, new_name):  # переименование файла
         pass
 
-    def rename_file(self, path, new_name):
+    def zip_directory(self, path):  # архивация папки
         pass
 
-    def zip_directory(self, path):
-        pass
-
-    def unzip_directory(self, path):
+    def unzip_directory(self, path):  # разархивация папки
         pass
 
     def __str__(self):
