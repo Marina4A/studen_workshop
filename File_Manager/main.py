@@ -113,15 +113,20 @@ class Manager:
     def rename_file(self, name_file, rename_file):  # переименование файла
         old_name_file = os.path.join(self.data, name_file)
         new_name_file = os.path.join(self.data, rename_file)
+        # print(old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')])
+        # print(old_name_file[old_name_file.find('.'):], new_name_file[new_name_file.find('.')])
         if os.path.exists(old_name_file) and self.file_name_check(name_file) and \
-                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')]:
+                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.'):]:
             os.rename(old_name_file, new_name_file)
             print(f'Файл {name_file} изменен на {rename_file}!')
         elif not os.path.exists(old_name_file) or not self.file_name_check(name_file) and \
-                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')]:
+                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.'):]:
             print(f'Файла {name_file} не существует!')
+        elif os.path.exists(old_name_file) and self.file_name_check(name_file) and \
+                old_name_file[old_name_file.find('.'):] != new_name_file[new_name_file.find('.'):]:
+            print(f'Файл {rename_file} и {name_file} разного формата!')
         else:
-            print(f'Файл {rename_file} другого формата!')
+            print('Некорректный ввод! Попробуйте еще раз!')
 
     def zip_directory(self, path):  # архивация папки
         pass
