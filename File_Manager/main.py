@@ -1,6 +1,6 @@
 import json
 import inspect
-import os
+import shutil
 import os
 
 
@@ -52,7 +52,7 @@ class Manager:
         self.data = fr"{new_path}"
 
     def create_directory(self, name_directory):  # создание папки
-        directory_path = os.path.join(self.data, name_directory)
+        directory_path = os.path.join(os.getcwd(), name_directory)
         if not os.path.exists(directory_path):
             os.mkdir(directory_path)
             print(f'Папка {name_directory} создана!')
@@ -60,7 +60,7 @@ class Manager:
             print(f'Папка {name_directory} уже существует!')
 
     def delete_directory(self, name_directory):  # удаление папки
-        directory_path = os.path.join(self.data, name_directory)
+        directory_path = os.path.join(os.getcwd(), name_directory)
         if os.path.exists(directory_path):
             os.rmdir(directory_path)
             print(f'Папка {name_directory} удалена!')
@@ -71,7 +71,7 @@ class Manager:
         pass
 
     def create_file(self, name_file):  # создать файл
-        file_path = os.path.join(self.data, name_file)
+        file_path = os.path.join(os.getcwd(), name_file)
         if not os.path.exists(file_path) and self.file_name_check(name_file):
             file = open(name_file, 'tw', encoding='utf-8')
             file.close()
@@ -80,7 +80,7 @@ class Manager:
             print(f'Файл, {name_file}, уже существует!')
 
     def write_file(self, name_file, text_file):  # запись текста в файл
-        file_path = os.path.join(self.data, name_file)
+        file_path = os.path.join(os.getcwd(), name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
             with open(name_file, 'a+', encoding='utf-8') as file:
                 file.write(text_file)
@@ -89,7 +89,7 @@ class Manager:
             print(f'Файла {name_file} не существует!')
 
     def read_file(self, name_file):  # просмотр содержимого текстового файла
-        file_path = os.path.join(self.data, name_file)
+        file_path = os.path.join(os.getcwd(), name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
             with open(name_file, 'r', encoding='utf-8') as file:
                 print(file.read())
@@ -97,24 +97,48 @@ class Manager:
             print(f'Файла {name_file} не существует!')
 
     def delete_file(self, name_file):  # удаление файлов
-        file_path = os.path.join(self.data, name_file)
+        file_path = os.path.join(os.getcwd(), name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
             os.remove(file_path)
             print(f'Файл {name_file} удален!')
         elif not os.path.exists(file_path) or not self.file_name_check(name_file):
             print('Такого файла не существует!')
 
-    def copy_file(self, start_path, finish_path):  # копирование файла
-        pass
+    def copy_file(self):  # копирование файла
+        while True:
+            name_directory, name_file = input(f'Введите папку и файл откуда/что скопировать: ').split()
+            # print(os.path.isfile(self.file_name_check(name_file)))
+            # print(os.path.isdir(os.path.join(os.getcwd(), name_directory)))
+            path_directory = os.path.join(os.getcwd(), name_directory)
+            if self.file_name_check(name_file):
+                path_file = os.path.join(path_directory, name_file)
+                # print(os.path.isfile(os.path.join(path_directory, self.file_name_check(name_file))))
+                if os.path.isfile(os.path.join(path_directory, path_file)) and \
+                        os.path.isdir(os.path.join(os.getcwd(), name_directory)):
+                    start_path = os.path.join(os.getcwd(), name_directory, name_file)
+                    break
+            elif not self.file_name_check(name_file):
+                print(f'Папки {name_directory} не существует!')
+            elif os.path.isfile(self.file_name_check(name_file)) and \
+                    not os.path.isdir(os.path.join(os.getcwd(), name_directory)):
+                print(f'Файла {name_file} не существует!')
+            else:
+                print('Некорректный ввод!')
+        while True:
+            name_directory_finish = input('Введите папку куда вставить, скопированный файл: ')
+            finish_path = os.path.join(os.getcwd(), name_directory_finish)
+            if os.path.isdir(finish_path):
+                break
+            else:
+                print('Такой папки не существует. Попробуйте еще раз!')
+        shutil.move(start_path, finish_path, copy_function=shutil.copy2)
 
     def move_file(self, start_path, finish_path):  # перемещение файла
         pass
 
     def rename_file(self, name_file, rename_file):  # переименование файла
-        old_name_file = os.path.join(self.data, name_file)
-        new_name_file = os.path.join(self.data, rename_file)
-        # print(old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')])
-        # print(old_name_file[old_name_file.find('.'):], new_name_file[new_name_file.find('.')])
+        old_name_file = os.path.join(os.getcwd(), name_file)
+        new_name_file = os.path.join(os.getcwd(), rename_file)
         if os.path.exists(old_name_file) and self.file_name_check(name_file) and \
                 old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.'):]:
             os.rename(old_name_file, new_name_file)
