@@ -22,7 +22,8 @@ class Manager:
             'mfile': self.move_file,
             'rnfile': self.rename_file,
             'zdir': self.zip_directory,
-            'unzdir': self.unzip_directory
+            'unzdir': self.unzip_directory,
+            'chdir': self.choose_directory
         }
 
     def menu(self):
@@ -41,7 +42,7 @@ class Manager:
             data_dict = json.load(file)
         return fr"{data_dict['path']}"
 
-    def choose_directory(self):
+    def choose_directory(self): # изменение директории
         new_path = input('Введите новую директорию: ')
         with open('settings.json', 'r', encoding='utf-8') as file:
             data_dict = json.load(file)
@@ -77,17 +78,20 @@ class Manager:
             print(f'Файл, {name_file}, создан!')
         elif os.path.exists(file_path) and self.file_name_check(name_file):
             print(f'Файл, {name_file}, уже существует!')
-        else:
-            print('Некорректное название файла!')
 
     def write_file(self, name_file, text_file):  # запись текста в файл
-        self.file_name_check(name_file)
+        file_path = os.path.join(self.data, name_file)
+        if os.path.exists(file_path) and self.file_name_check(name_file):
+            with open(name_file, 'a+', encoding='utf-8') as file:
+                file.write(text_file)
+        elif not os.path.exists(file_path):
+            print(f'Файла {name_file} не существует!')
 
     def read_file(self, path):  # просмотр содержимого текстового файла
         pass
 
     def delete_file(self, name_file):  # удаление файлов
-        file_path = self.data + '/' + name_file
+        file_path = os.path.join(self.data, name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
             os.remove(file_path)
             print(f'Файл {name_file} удален!')
@@ -114,7 +118,8 @@ class Manager:
         if '.' in name_file and name_file.endswith(type_file) and \
                 len(name_file[:name_file.find('.')]) > 0:
             return True
-        return False
+        else:
+            print('Некорректное название файла')
 
     def __str__(self):
         return f'Путь файла {self.data}'
