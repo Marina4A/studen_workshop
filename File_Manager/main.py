@@ -1,5 +1,6 @@
 import json
 import inspect
+from os import path
 
 
 class Manager:
@@ -60,23 +61,24 @@ class Manager:
         pass
 
     def create_file(self, name_file):  # создать файл
-        type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls')
-        while True:
-            if '.' in name_file and name_file.endswith(type_file) and len(name_file[:name_file.find('.')]) > 0:
-                break
-            name_file = input('Введите корректное название файла: ')
+        self.file_name_check(name_file)
         file = open(name_file, 'tw', encoding='utf-8')
         file.close()
         print('Файл создан!')
 
-    def write_file(self, path, text):  # запись текста в файл
-        pass
+    def write_file(self, name_file, text_file):  # запись текста в файл
+        self.file_name_check(name_file)
 
     def read_file(self, path):  # просмотр содержимого текстового файла
         pass
 
-    def delete_file(self, path):  # удаление файлов
-        pass
+    def delete_file(self, name_file):  # удаление файлов
+        self.file_name_check(name_file)
+        file_path = self.data + '\\' + name_file
+        if path.exists(file_path):
+            print(f'Файл {name_file} удален!')
+        elif not path.exists(file_path):
+            print('Такого файла не существует!')
 
     def copy_file(self, start_path, finish_path):  # копирование файла
         pass
@@ -92,6 +94,13 @@ class Manager:
 
     def unzip_directory(self, path):  # разархивация папки
         pass
+
+    def file_name_check(self, name_file):
+        type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls')
+        while True:
+            if '.' in name_file and name_file.endswith(type_file) and len(name_file[:name_file.find('.')]) > 0:
+                return True
+            name_file = input('Введите корректное название файла: ')
 
     def __str__(self):
         return f'Путь файла {self.data}'
