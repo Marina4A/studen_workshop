@@ -63,7 +63,7 @@ class Manager:
     def delete_directory(self, name_directory):  # удаление папки
         directory_path = os.path.join(os.getcwd(), name_directory)
         if os.path.exists(directory_path):
-            os.rmdir(directory_path)
+            shutil.rmtree(directory_path)
             print(f'Папка {name_directory} удалена!')
         else:
             print(f'Папки {name_directory} не существует!')
@@ -129,11 +129,34 @@ class Manager:
         else:
             print('Некорректный ввод! Попробуйте еще раз!')
 
-    def zip_directory(self, path):  # архивация папки
-        pass
+    def zip_directory(self, name_directory):  # архивация папки
+        name_all_directory = os.walk(self.data)
+        path_directory = ''
+        name_zip = ''
+        for directory in name_all_directory:
+            name_zip = os.path.join(f'{directory[0]}.zip')
+            if directory[0].endswith(name_directory):
+                path_directory = directory[0]
+                break
+        if path_directory != '' and not os.path.exists(name_zip):
+            shutil.make_archive(path_directory, format='zip', base_dir=name_directory)
+            print(f'{name_directory} заархивирован!')
+        elif os.path.exists(name_zip):
+            print(f'{name_directory}.zip уже существует!')
+        elif path_directory == '':
+            print(f'Папки {name_directory} не существует!')
 
-    def unzip_directory(self, path):  # разархивация папки
-        pass
+    def unzip_directory(self, name_directory):  # разархивация папки
+        name_all = os.walk(self.data)
+        name_directory = f'{name_directory}.zip'
+        for directory in name_all:
+            if name_directory in directory[2]:
+                path_directory = os.path.join(directory[0], name_directory)
+                shutil.unpack_archive(path_directory, format='zip', extract_dir=directory[0])
+                print(f'Файл {name_directory} разархифирован!')
+                break
+        else:
+            print(f'Архифа {name_directory} не существует!')
 
     def file_name_check(self, name_file):
         type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls')
