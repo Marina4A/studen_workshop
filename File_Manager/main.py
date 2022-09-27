@@ -84,6 +84,7 @@ class Manager:
         if os.path.exists(file_path) and self.file_name_check(name_file):
             with open(name_file, 'a+', encoding='utf-8') as file:
                 file.write(text_file)
+                print(f'Информация успешно записана!')
         elif not os.path.exists(file_path):
             print(f'Файла {name_file} не существует!')
 
@@ -109,8 +110,18 @@ class Manager:
     def move_file(self, start_path, finish_path):  # перемещение файла
         pass
 
-    def rename_file(self, path, new_name):  # переименование файла
-        pass
+    def rename_file(self, name_file, rename_file):  # переименование файла
+        old_name_file = os.path.join(self.data, name_file)
+        new_name_file = os.path.join(self.data, rename_file)
+        if os.path.exists(old_name_file) and self.file_name_check(name_file) and \
+                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')]:
+            os.rename(old_name_file, new_name_file)
+            print(f'Файл {name_file} изменен на {rename_file}!')
+        elif not os.path.exists(old_name_file) or not self.file_name_check(name_file) and \
+                old_name_file[old_name_file.find('.'):] == new_name_file[new_name_file.find('.')]:
+            print(f'Файла {name_file} не существует!')
+        else:
+            print(f'Файл {rename_file} другого формата!')
 
     def zip_directory(self, path):  # архивация папки
         pass
@@ -126,8 +137,8 @@ class Manager:
         else:
             print('Некорректное название файла')
 
-    def __str__(self):
-        return f'Путь файла {self.data}'
+    # def __str__(self):
+    #     return f'Путь файла {self.data}'
 
 
 if __name__ == '__main__':
