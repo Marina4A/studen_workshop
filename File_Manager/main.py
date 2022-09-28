@@ -44,7 +44,7 @@ class Manager:
             check_name = input('Вы зарегистрированы в системе (да/нет)? ')
             name_user = input('Введите имя пользователя: ')
             passord_user = input('Введите пароль: ')
-            if check_name.lower() in 'да':
+            if check_name.lower() == 'да':
                 with open('users.json', 'r+', encoding='utf-8') as file:
                     users = json.load(file)
                 if name_user in users:
@@ -63,7 +63,7 @@ class Manager:
                     break
                 else:
                     print('Пользователь не найден!')
-            elif check_name.lower() in 'нет':
+            elif check_name.lower() == 'нет':
                 with open('users.json', 'r', encoding='utf-8') as file:
                     users = json.load(file)
                 if name_user not in users:
