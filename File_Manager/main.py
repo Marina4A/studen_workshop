@@ -1,4 +1,3 @@
-import copy
 import json
 import inspect
 import shutil
@@ -27,6 +26,7 @@ class Manager:
         }
 
     def menu(self):
+        self.check_users()
         while True:
             move = input(f'{self.path}: ')
             command, *args = move.split()
@@ -36,6 +36,48 @@ class Manager:
                     self.dict_cmds[command](*args)
                 else:
                     print(f'Функция {command} ждет {len(args_func) - 1} аргумент(а)')
+            else:
+                print('Некорректный ввод!')
+
+    def check_users(self):
+        while True:
+            check_name = input('Вы зарегистрированы в системе (да/нет)? ')
+            name_user = input('Введите имя пользователя: ')
+            passord_user = input('Введите пароль: ')
+            if check_name.lower() in 'да':
+                with open('users.json', 'r+', encoding='utf-8') as file:
+                    users = json.load(file)
+                if name_user in users:
+                    while True:
+                        if users[name_user] == passord_user:
+                            directory_users = os.path.join(self.path, name_user)
+                            if not os.path.isdir(directory_users):
+                                os.mkdir(directory_users)
+                            self.path = directory_users
+                            self.data = directory_users
+                            print(f'Добро пожаловать! {name_user}')
+                            break
+                        else:
+                            print('Неверный пароль! Попробуйте еще раз!')
+                            passord_user = input('Введите пароль: ')
+                    break
+                else:
+                    print('Пользователь не найден!')
+            elif check_name.lower() in 'нет':
+                with open('users.json', 'r', encoding='utf-8') as file:
+                    users = json.load(file)
+                if name_user not in users:
+                    with open('users.json', 'w+', encoding='utf-8') as file:
+                        users[name_user] = passord_user
+                        json.dump(users, file, indent=4)
+                    directory_users = os.path.join(self.path, name_user)
+                    self.path = directory_users
+                    self.data = directory_users
+                    os.mkdir(directory_users)
+                    print(f'Вы зарегистрированы! Добро пожаловать, {name_user}!')
+                    break
+                else:
+                    print('Такой пользователь уже существует!')
 
     def get_directory(self):
         with open('settings.json', 'r', encoding='utf-8') as file:
@@ -52,27 +94,35 @@ class Manager:
         self.data = fr"{new_path}"
 
     def create_directory(self, name_directory):  # создание папки
-        directory_path = os.path.join(self.path, name_directory)
-        if not os.path.exists(directory_path):
-            os.mkdir(directory_path)
-            print(f'Папка {name_directory} создана!')
-        else:
-            print(f'Папка {name_directory} уже существует!')
+            directory_path = os.path.join(self.path, name_directory)
+            type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'zip')
+            if not os.path.exists(directory_path) and '.' not in name_directory and \
+                    not name_directory.endswith(type_file):
+                os.mkdir(directory_path)
+                print(f'Папка {name_directory} создана!')
+            elif os.path.exists(directory_path):
+                print(f'Папка {name_directory} уже существует!')
+            else:
+                print('Некорректный ввод!')
 
     def delete_directory(self, name_directory):  # удаление папки
-        directory_path = os.path.join(self.path, name_directory)
-        if os.path.exists(directory_path):
-            shutil.rmtree(directory_path)
-            print(f'Папка {name_directory} удалена!')
-        else:
-            print(f'Папки {name_directory} не существует!')
+        try:
+            directory_path = os.path.join(self.path, name_directory)
+            if os.path.exists(directory_path):
+                shutil.rmtree(directory_path)
+                print(f'Папка {name_directory} удалена!')
+            else:
+                print(f'Папки {name_directory} не существует!')
+        except NotADirectoryError:
+            print(f'Папка не может содержать такой формат!')
 
     def move_directory(self, name_directory):  # перемещение между папками
+        move_directory = ''
+        path_directory = name_directory
         if '..' in name_directory:
             move_directory, name_directory = '..', ''
             path_directory = self.data
-        else:
-            move_directory = ''
+        elif name_directory != '..':
             path_directory = os.path.join(self.path, name_directory)
 
         if move_directory == '' and os.path.isdir(path_directory):
@@ -92,17 +142,18 @@ class Manager:
     def create_file(self, name_file):  # создать файл
         file_path = os.path.join(self.path, name_file)
         if not os.path.exists(file_path) and self.file_name_check(name_file):
-            file = open(name_file, 'tw', encoding='utf-8')
+            file = open(file_path, 'tw', encoding='utf-8')
             file.close()
             print(f'Файл, {name_file}, создан!')
         elif os.path.exists(file_path) and self.file_name_check(name_file):
             print(f'Файл, {name_file}, уже существует!')
 
-    def write_file(self, name_file, text_file):  # запись текста в файл
+    def write_file(self, name_file):  # запись текста в файл
+        text = input('Введите текст для записи в файл: ')
         file_path = os.path.join(self.path, name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
-            with open(name_file, 'a+', encoding='utf-8') as file:
-                file.write(text_file)
+            with open(file_path, 'a+', encoding='utf-8') as file:
+                file.write(text)
                 print(f'Информация успешно записана!')
         elif not os.path.exists(file_path):
             print(f'Файла {name_file} не существует!')
@@ -110,14 +161,14 @@ class Manager:
     def read_file(self, name_file):  # просмотр содержимого текстового файла
         file_path = os.path.join(self.path, name_file)
         if os.path.exists(file_path) and self.file_name_check(name_file):
-            with open(name_file, 'r', encoding='utf-8') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 print(file.read())
         elif not os.path.exists(file_path):
             print(f'Файла {name_file} не существует!')
 
     def delete_file(self, name_file):  # удаление файлов
         file_path = os.path.join(self.path, name_file)
-        if os.path.exists(file_path) and self.file_name_check(name_file):
+        if os.path.exists(file_path) and os.path.exists(file_path):
             os.remove(file_path)
             print(f'Файл {name_file} удален!')
         elif not os.path.exists(file_path) or not self.file_name_check(name_file):
