@@ -94,16 +94,16 @@ class Manager:
         self.data = fr"{new_path}"
 
     def create_directory(self, name_directory):  # создание папки
-            directory_path = os.path.join(self.path, name_directory)
-            type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'zip')
-            if not os.path.exists(directory_path) and '.' not in name_directory and \
-                    not name_directory.endswith(type_file):
-                os.mkdir(directory_path)
-                print(f'Папка {name_directory} создана!')
-            elif os.path.exists(directory_path):
-                print(f'Папка {name_directory} уже существует!')
-            else:
-                print('Некорректный ввод!')
+        directory_path = os.path.join(self.path, name_directory)
+        type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'zip')
+        if not os.path.exists(directory_path) and '.' not in name_directory and \
+                not name_directory.endswith(type_file):
+            os.mkdir(directory_path)
+            print(f'Папка {name_directory} создана!')
+        elif os.path.exists(directory_path):
+            print(f'Папка {name_directory} уже существует!')
+        else:
+            print('Некорректный ввод!')
 
     def delete_directory(self, name_directory):  # удаление папки
         try:
