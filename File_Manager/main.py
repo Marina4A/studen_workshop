@@ -228,7 +228,7 @@ class Manager:
         else:
             print(f'Архифа {name_directory} не существует!')
 
-    def file_name_check(self, name_file):
+    def file_name_check(self, name_file): # проверка названия файла
         type_file = ('txt', 'doc', 'docx', 'csv', 'xlsx', 'xls', 'zip')
         if '.' in name_file and name_file.endswith(type_file) and \
                 len(name_file[:name_file.find('.')]) > 0:
