@@ -18,7 +18,7 @@ def free_port(port):
         sock.close()
         return True
     except OSError:
-        logging.info('Порт занят!')
+        logging.info(f'Порт "{port}" занят!')
         return False
 
 
@@ -32,6 +32,7 @@ def ip_validation(ip_adress):
 
 
 def func_num(ip_adress):
+    """Проверка, что все элементы IP являются целыми числами"""
     ls = [x for x in ip_adress if not x.isdigit()]
     if len(ls) == 0:
         return True
@@ -40,6 +41,10 @@ def func_num(ip_adress):
 
 
 def interval_ip(ip_adress):
+    """
+    Проверка, что все элементы IP находятся
+    в диапазоне от 0 до 255
+    """
     ls = [ip for ip in ip_adress if not -1 < int(ip) < 256]
     if len(ls) == 0:
         return True
@@ -48,6 +53,11 @@ def interval_ip(ip_adress):
 
 
 def func_len(ip_adress):
+    """
+    Проверка, что IP состоит
+    из четырех элементов, разделенные
+    точкой
+    """
     if len(ip_adress) == 4:
         return True
     logging.info(f'Адрес - это четыре числа, разделенные точками.')
