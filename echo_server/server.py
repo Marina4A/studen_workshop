@@ -41,8 +41,10 @@ class Server:
     def listen_client(self, conn, address):
         """
         Отправка сообщения клиента, либо закрытие соединения
+        Args:
+            conn (socket): сокет с данными клиента
+            address (tuple): ip-адрес и номера соединения
         """
-
         self.authorization(address, conn)
         while True:
             try:
@@ -84,13 +86,31 @@ class Server:
                     if key == address[0]:
                         name_user = value['name']
                         password_user = value['password']
-                        # дописать
+                        # login = input('Введите имя пользователя: ')
+                        # password = input('Введите пароль: ')
+                        # if check_date
+                        conn.send(pickle.dumps(["passwd", "Введите свой пароль: "]))
+                        passwd = pickle.loads(conn.recv(1024))[1]
+                        conn.send(pickle.dumps(["success", f"Здравствуйте, {name_user}"])) if self.check_password(
+                            passwd, password_user) else self.authorization(address, conn)
                         registration_user = False
         if registration_user:
             self.registration(address, conn)
 
-    def broadcast(self):
-        pass
+    def broadcast(self, messenger, conn, address, username):
+        """
+        Отправка данных клиенту (сообщение и имя пользователя с номером соединения)
+        :param messenger: сообщение
+        :param conn: сокет с данными
+        :param address: ip-адрес и номер соединения
+        :param username: имя клиента
+        """
+        username += f"_{address[1]}"
+        for sock in self.clients:
+            if sock != conn:
+                data = pickle.dumps(["message", messenger, username])
+                sock.send(data)
+                logging.info(f"Отправляем данные клиенту {sock.getsockname()}: {messenger}")
 
     def read_json(self):
         """Чтение файла с авторизованными пользователями"""
@@ -106,7 +126,15 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        pass
+        conn.send(pickle.dumps(
+            ["auth", ""]))
+        name = pickle.loads(conn.recv(1024))[1]
+        conn.send(pickle.dumps(["passwd", "Введите пароль: "]))
+        passwd = self.hash_generation(pickle.loads(conn.recv(1024))[1])
+        conn.send(pickle.dumps(["success", f"Приветствую, {name}"]))
+        self.users_authorization.append({address[0]: {'name': name, 'password': passwd}})
+        self.write_json()
+        self.users_authorization = self.read_json()
 
     def write_json(self):
         """
@@ -114,6 +142,29 @@ class Server:
         """
         with open(self.users, 'w', encoding='utf-8') as file:
             json.dump(self.users_authorization, file, indent=4)
+
+    def check_password(self, password, userpassword):
+        """
+        Проверяем пароль из файла и введенный пользователем
+        Args:
+            :param password: введенный пароль пользователем
+            :param userpassword: пароль пользователя из json
+        returns:
+            boolean: True/False
+        """
+        key = hashlib.md5(password.encode() + b'salt').hexdigest()
+        return key == userpassword
+
+    def hash_generation(self, password):
+        """
+        Генерация пароля
+        Args:
+            password: пароль
+        returns:
+            str: хэш пароль
+        """
+        key = hashlib.md5(password.encode() + b'salt').hexdigest()
+        return key
 
 
 def main():
