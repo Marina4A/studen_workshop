@@ -4,11 +4,13 @@ import logging
 
 def port_validation(port):
     """Проверяется корректность порта"""
-    if -1 < int(port) < 65536:
-        return free_port(port)
-    logging.info("Некорректное значение порта!")
-    return False
-
+    try:
+        if -1 < int(port) < 65536:
+            return free_port(port)
+        logging.info("Некорректное значение порта!")
+        return False
+    except ValueError:
+        return False
 
 def free_port(port):
     """Проверка свободен ли порт"""

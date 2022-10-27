@@ -126,10 +126,9 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        conn.send(pickle.dumps(
-            ["auth", ""]))
+        conn.send(pickle.dumps(["name", ""]))
         name = pickle.loads(conn.recv(1024))[1]
-        conn.send(pickle.dumps(["passwd", "Введите пароль: "]))
+        conn.send(pickle.dumps(["password", "Введите пароль: "]))
         passwd = self.hash_generation(pickle.loads(conn.recv(1024))[1])
         conn.send(pickle.dumps(["success", f"Приветствую, {name}"]))
         self.users_authorization.append({address[0]: {'name': name, 'password': passwd}})
