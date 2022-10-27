@@ -26,10 +26,11 @@ def free_port(port):
 
 def ip_validation(ip_adress):
     """Проверка корректности IP"""
-    if func_len(ip_adress) and func_num(ip_adress) and interval_ip(ip_adress):
-        logging.info('IP корректен!')
-        return True
-    logging.info(f'IP "{ip_adress}" некорректен!')
+    if len(ip_adress) > 1:
+        if func_len(ip_adress) and func_num(ip_adress) and interval_ip(ip_adress):
+            logging.info('IP корректен!')
+            return True
+        logging.info(f'IP "{ip_adress}" некорректен!')
     return False
 
 

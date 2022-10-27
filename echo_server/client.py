@@ -46,14 +46,13 @@ class Client:
         """Ввод сообщения, проверка на exit для выхода"""
         Thread(target=self.data_acquisition).start()
         print('Чтобы разорвать соединение введите "exit".')
-        self.username = input(f"Введите имя:")
         # password = input('Введите пароль:')
         self.send_password()
         self.send_name()
         self.welcome()
-        while self.message != 'finish':
-            while True:
-                self.message = input('Введите сообщение:')
+        while True:
+            self.message = input(f'{self.username}, ведите сообщение:')
+            if self.message != "":
                 if self.message.lower() == 'exit':
                     logging.info(f"Разрыв соединения {self.sock.getsockname()} с сервером!")
                     break
@@ -70,6 +69,7 @@ class Client:
 
     def send_name(self):
         """Отправка имени на сервер"""
+        self.username = input(f"Введите имя:")
         self.sock.send(pickle.dumps(["name", self.username]))
         sleep(1.5)
 
@@ -86,8 +86,9 @@ class Client:
                 self.data = self.sock.recv(1024)
                 if not self.data:
                     sys.exit(0)
-                print(f"\n{pickle.loads(self.data)[2]} -->", pickle.loads(self.data)[1])
-                logging.info(f"Клиент {self.sock.getsockname()} принял данные от сервера: {pickle.loads(self.data)[1]}")
+                # print(f"\n{pickle.loads(self.data)[1]} -->", pickle.loads(self.data)[0])
+                logging.info(f"Клиент {self.sock.getsockname()} принял "
+                             f"данные от сервера: {pickle.loads(self.data)[1]}")
             except OSError:
                 break
 

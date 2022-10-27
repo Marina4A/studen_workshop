@@ -57,9 +57,10 @@ class Server:
 
             if data:
                 status, data, username = pickle.loads(data)
+                print(data)
+                print(len(data))
                 logging.info(f"Прием данных от клиента '{username}_{address[1]}': {data}")
-                if status == "message":
-                    self.broadcast(data, conn, address, username)
+                self.broadcast(data, conn, address, username)
 
             else:
                 # Закрываем соединение
@@ -86,9 +87,6 @@ class Server:
                     if key == address[0]:
                         name_user = value['name']
                         password_user = value['password']
-                        # login = input('Введите имя пользователя: ')
-                        # password = input('Введите пароль: ')
-                        # if check_date
                         conn.send(pickle.dumps(["passwd", "Введите свой пароль: "]))
                         passwd = pickle.loads(conn.recv(1024))[1]
                         conn.send(pickle.dumps(["success", f"Здравствуйте, {name_user}"])) if self.check_password(
@@ -114,7 +112,7 @@ class Server:
 
     def read_json(self):
         """Чтение файла с авторизованными пользователями"""
-        with (self.users, 'r') as file:
+        with open(self.users, 'r', encoding='utf-8') as file:
             users_text = json.load(file)
         return users_text
 
@@ -129,9 +127,9 @@ class Server:
         conn.send(pickle.dumps(["name", ""]))
         name = pickle.loads(conn.recv(1024))[1]
         conn.send(pickle.dumps(["password", "Введите пароль: "]))
-        passwd = self.hash_generation(pickle.loads(conn.recv(1024))[1])
+        password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
         conn.send(pickle.dumps(["success", f"Приветствую, {name}"]))
-        self.users_authorization.append({address[0]: {'name': name, 'password': passwd}})
+        self.users_authorization.append({address[0]: {'name': name, 'password': password}})
         self.write_json()
         self.users_authorization = self.read_json()
 
