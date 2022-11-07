@@ -12,14 +12,17 @@ def port_validation(port):
     except ValueError:
         return False
 
+
 def free_port(port):
     """Проверка свободен ли порт"""
+
+    sock = socket.socket()
     try:
-        sock = socket.socket()
-        sock.bind(("", port))
+        sock.bind(("", int(port)))
         sock.close()
         return True
     except OSError:
+
         logging.info(f'Порт "{port}" занят!')
         return False
 

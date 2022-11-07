@@ -36,7 +36,7 @@ class Client:
         try:
             self.sock.connect((self.server_ip, self.port))
         except ConnectionRefusedError:
-            print(f"Не удалось присоединиться к серверу {self.server_ip, self.port}")
+            print(f"Не удалось присоединиться к серверу: ip-адрес: {self.server_ip}, порт: {self.port}")
             sys.exit(0)
         finally:
             logging.info(
@@ -100,17 +100,17 @@ def main():
     IP_DEFAULT = "127.0.0.1"
     PORT_DEFAULT = 1025
 
-    user_ip = input("Введите ip сервера (enter для значения по умолчанию):")
-    if not ip_validation(user_ip):
-        user_ip = IP_DEFAULT
-        print(f"Установили ip-адресс {user_ip} по умолчанию!")
-
     user_port = input("Введите порт (enter для значения по умолчанию):")
     if not port_validation(user_port):
         user_port = PORT_DEFAULT
         print(f"Установили порт {user_port} по умолчанию!")
 
-    Client(user_ip, user_port)
+    user_ip = input("Введите ip сервера (enter для значения по умолчанию):")
+    if not ip_validation(user_ip):
+        user_ip = IP_DEFAULT
+        print(f"Установили ip-адресс {user_ip} по умолчанию!")
+
+    Client(user_ip, int(user_port))
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ import logging
 
 from validation import free_port, port_validation
 
-logging.basicConfig(format='%(asctime)s {%(level_name)s %(func_name)s: %(nessage)s}',
+logging.basicConfig(format='%(asctime)s {%(levelname)s %(funcName)s: %(message)s}',
                     handlers=[logging.FileHandler('log/server.log', encoding='utf-8'), logging.StreamHandler()],
                     level=logging.INFO)
 
