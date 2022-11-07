@@ -21,8 +21,8 @@ class Server:
         self.port = port
         self.clients = []
         self.users = 'users.json'
-        self.server_run()
         self.status = None
+        self.server_run()
 
     def server_run(self):
         """
@@ -57,8 +57,8 @@ class Server:
 
             if data:
                 status, data, username = pickle.loads(data)
-                print(data)
-                print(len(data))
+                # print(data)
+                # print(len(data))
                 logging.info(f"Прием данных от клиента '{username}_{address[1]}': {data}")
                 self.broadcast(data, conn, address, username)
 
@@ -124,7 +124,7 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        conn.send(pickle.dumps(["name", ""]))
+        conn.send(pickle.dumps(["auth", ""]))
         name = pickle.loads(conn.recv(1024))[1]
         conn.send(pickle.dumps(["password", "Введите пароль: "]))
         password = self.hash_generation(pickle.loads(conn.recv(1024))[1])

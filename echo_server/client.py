@@ -31,15 +31,15 @@ class Client:
 
     def server_connection(self):
         """Соединение клиента с сервером"""
-        self.sock = socket.socket()
-        self.sock.setblocking(1)
+        sock = socket.socket()
+        sock.setblocking(1)
         try:
-            self.sock.connect((self.server_ip, self.port))
+            sock.connect((self.server_ip, self.port))
         except ConnectionRefusedError:
             print(f"Не удалось присоединиться к серверу: ip-адрес: {self.server_ip}, порт: {self.port}")
             sys.exit(0)
-        finally:
-            logging.info(
+        self.sock = sock
+        logging.info(
                 f"Установлено соединение {self.sock.getsockname()} с сервером ('{self.server_ip}', {self.port})")
 
     def message_receiving(self):
@@ -70,7 +70,7 @@ class Client:
     def send_name(self):
         """Отправка имени на сервер"""
         self.username = input(f"Введите имя:")
-        self.sock.send(pickle.dumps(["name", self.username]))
+        self.sock.send(pickle.dumps(["auth", self.username]))
         sleep(1.5)
 
     def welcome(self):
@@ -89,6 +89,7 @@ class Client:
                 # print(f"\n{pickle.loads(self.data)[1]} -->", pickle.loads(self.data)[0])
                 logging.info(f"Клиент {self.sock.getsockname()} принял "
                              f"данные от сервера: {pickle.loads(self.data)[1]}")
+                self.data = pickle.loads(self.data)[1]
             except OSError:
                 break
 
