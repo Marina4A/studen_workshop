@@ -14,31 +14,30 @@ logging.basicConfig(format='%(asctime)s {%(levelname)s %(funcName)s: %(message)s
 
 
 class Server:
-    def __init__(self, port):
+    def __init__(self, ip, port):
         """
         :param
             port: порт сервера
         """
         self.port = port
+        self.users_authorization = []
         self.clients = []
         self.users = 'users.json'
         self.status = None
+        self.ip = ip
         self.server_run()
 
     def server_run(self):
         """
         Запуск сервера
         """
-        sock = socket.socket()
-        sock.bind(('', self.port))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind((self.ip, self.port))
         sock.listen(5)
         self.sock = sock
         logging.info(f'Сервер запущен! Порт {self.port}.')
         while True:
-            # print('Инф')
             conn, addr = self.sock.accept()
-            print('Заработало')
-            logging.info('Заработало')
             Thread(target=self.listen_client, args=(conn, addr)).start()
             sleep(1)
             logging.info(f"Подключился клиент {addr}")
@@ -51,7 +50,6 @@ class Server:
             conn (socket): сокет с данными клиента
             address (tuple): ip-адрес и номера соединения
         """
-        print('Авторизация!')
         self.authorization(address, conn)
         while True:
             try:
@@ -64,8 +62,6 @@ class Server:
 
             if data:
                 status, data, username = pickle.loads(data)
-                # print(data)
-                # print(len(data))
                 logging.info(f"Прием данных от клиента '{username}_{address[1]}': {data}")
                 self.broadcast(data, conn, address, username)
 
@@ -82,31 +78,32 @@ class Server:
         :param address: IP-адрес и номер соединения
         :param conn: сокет
         """
-        print('Попали в авторизацию')
+        registration_user = True
+
         try:
             self.users_authorization = self.read_json()
         except json.decoder.JSONDecodeError:
+            registration_user = False
             self.registration(address, conn)
 
-        registration_user = True
         for users in self.users_authorization:
             if address[0] in users:
                 for key, value in users.items():
                     if key == address[0]:
-                        name_user = value['name']
+                        name = value['name']
+                        conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
+                        name_user = pickle.loads(conn.recv(1024))[1]
+                        if self.check_name(name, name_user):
+                            logging.info(f'Пользователь с именем "{name_user}" найден!')
                         password_user = value['password']
-                        print(0)
-                        conn.send(pickle.dumps(["passwd", "Введите свой пароль: "]))
-                        print(1)
+                        conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
                         passwd = pickle.loads(conn.recv(1024))[1]
-                        print(2)
                         if self.check_password(passwd, password_user):
-                            conn.send(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
+                            conn.sendall(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
                         else:
                             self.authorization(address, conn)
-                        registration_user = False
-        if registration_user:
-            self.registration(address, conn)
+                        if registration_user:
+                            self.registration(address, conn, name_user, passwd)
 
     def broadcast(self, messenger, conn, address, username):
         """
@@ -118,18 +115,20 @@ class Server:
         """
         username += f"_{address[1]}"
         for sock in self.clients:
-            if sock != conn:
+            print(sock)
+            if sock == conn:
                 data = pickle.dumps(["message", messenger, username])
-                sock.send(data)
+                sock.sendall(data)
                 logging.info(f"Отправляем данные клиенту {sock.getsockname()}: {messenger}")
 
     def read_json(self):
         """Чтение файла с авторизованными пользователями"""
         with open(self.users, 'r', encoding='utf-8') as file:
             users_text = json.load(file)
+        print(users_text)
         return users_text
 
-    def registration(self, address, conn):
+    def registration(self, address, conn, name=None, password=None):
         """
         Регистрация новых пользователей
         и добавление информации о них в json файл
@@ -137,12 +136,13 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        print('Попали в регистрацию')
-        conn.send(pickle.dumps(["auth", ""]))
-        name = pickle.loads(conn.recv(1024))[1]
-        conn.send(pickle.dumps(["password", "Введите пароль: "]))
-        password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
-        conn.send(pickle.dumps(["success", f"Приветствую, {name}"]))
+        print(address, conn, name, password)
+        if name is None or password is None:
+            conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
+            name = pickle.loads(conn.recv(1024))[1]
+            conn.sendall(pickle.dumps(["password", "запрашивает пароль"]))
+            password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
+            conn.sendall(pickle.dumps(["success", f"Приветствую, {name}"]))
         self.users_authorization.append({address[0]: {'name': name, 'password': password}})
         self.write_json()
         self.users_authorization = self.read_json()
@@ -151,7 +151,7 @@ class Server:
         """
         Запись пользователей в json-файл
         """
-        with open(self.users, 'w', encoding='utf-8') as file:
+        with open(self.users, 'a+', encoding='utf-8') as file:
             json.dump(self.users_authorization, file, indent=4)
 
     def check_password(self, password, userpassword):
@@ -163,10 +163,18 @@ class Server:
         returns:
             boolean: True/False
         """
-        print('Проверка пароля')
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
-        print('Проверка пароля', key == userpassword)
         return key == userpassword
+
+    def check_name(self, name, username):
+        """
+        Сравниваем логин из json с введенным пользователем
+        :param name: данные из json-файла
+        :param username: введенный логин пользователем
+        :return:
+            boolean: True/False
+        """
+        return name == username
 
     def hash_generation(self, password):
         """
@@ -176,6 +184,7 @@ class Server:
         returns:
             str: хэш пароль
         """
+
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
         return key
 
@@ -186,6 +195,7 @@ def main():
     Запуск сервера
     """
     port = 2000
+    IP = "127.0.0.1"
     if not port_validation(port):
         if not free_port(port):
             port_free = False
@@ -193,7 +203,7 @@ def main():
                 port += 1
                 port_free = free_port(port)
     try:
-        server = Server(port)
+        server = Server(IP, port)
     except KeyboardInterrupt:
         logging.info('Сервер остановился!')
 
