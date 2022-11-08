@@ -35,7 +35,10 @@ class Server:
         self.sock = sock
         logging.info(f'Сервер запущен! Порт {self.port}.')
         while True:
+            # print('Инф')
             conn, addr = self.sock.accept()
+            print('Заработало')
+            logging.info('Заработало')
             Thread(target=self.listen_client, args=(conn, addr)).start()
             sleep(1)
             logging.info(f"Подключился клиент {addr}")
@@ -48,6 +51,7 @@ class Server:
             conn (socket): сокет с данными клиента
             address (tuple): ip-адрес и номера соединения
         """
+        print('Авторизация!')
         self.authorization(address, conn)
         while True:
             try:
@@ -78,6 +82,7 @@ class Server:
         :param address: IP-адрес и номер соединения
         :param conn: сокет
         """
+        print('Попали в авторизацию')
         try:
             self.users_authorization = self.read_json()
         except json.decoder.JSONDecodeError:
@@ -90,10 +95,15 @@ class Server:
                     if key == address[0]:
                         name_user = value['name']
                         password_user = value['password']
+                        print(0)
                         conn.send(pickle.dumps(["passwd", "Введите свой пароль: "]))
+                        print(1)
                         passwd = pickle.loads(conn.recv(1024))[1]
-                        conn.send(pickle.dumps(["success", f"Здравствуйте, {name_user}"])) if self.check_password(
-                            passwd, password_user) else self.authorization(address, conn)
+                        print(2)
+                        if self.check_password(passwd, password_user):
+                            conn.send(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
+                        else:
+                            self.authorization(address, conn)
                         registration_user = False
         if registration_user:
             self.registration(address, conn)
@@ -127,6 +137,7 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
+        print('Попали в регистрацию')
         conn.send(pickle.dumps(["auth", ""]))
         name = pickle.loads(conn.recv(1024))[1]
         conn.send(pickle.dumps(["password", "Введите пароль: "]))

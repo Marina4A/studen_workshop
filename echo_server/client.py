@@ -51,8 +51,7 @@ class Client:
         print('Сервер запрашивает имя')
         self.send_name()
         while True:
-            print(self.data)
-            if 'Здравствуйте' in self.data:
+            if 'Приветствую' in self.data:
                 print('Логин и пароль верны')
                 self.welcome()
                 break
@@ -72,13 +71,10 @@ class Client:
 
     def send_password(self):
         """Отправка пароля на сервер"""
-        print(4)
         # password = getpass(self.data)
         password = input('Введите пароль:')
         self.sock.send(pickle.dumps(['password', password]))
-        # print('test1', self.data)
         sleep(2.5)
-        # print('test2', self.data)
 
     def send_name(self):
         """Отправка имени на сервер"""
