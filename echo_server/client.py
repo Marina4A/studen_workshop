@@ -47,9 +47,18 @@ class Client:
         Thread(target=self.data_acquisition).start()
         print('Чтобы разорвать соединение введите "exit".')
         # password = input('Введите пароль:')
-        self.send_password()
+        sleep(1)
+        print('Сервер запрашивает имя')
         self.send_name()
-        self.welcome()
+        while True:
+            print(self.data)
+            if 'Здравствуйте' in self.data:
+                print('Логин и пароль верны')
+                self.welcome()
+                break
+            elif self.data == 'Введите свой пароль: ':
+                print('Сервер запрашивает пароль')
+                self.send_password()
         while True:
             self.message = input(f'{self.username}, ведите сообщение:')
             if self.message != "":
@@ -63,9 +72,13 @@ class Client:
 
     def send_password(self):
         """Отправка пароля на сервер"""
-        password = getpass(self.data)
+        print(4)
+        # password = getpass(self.data)
+        password = input('Введите пароль:')
         self.sock.send(pickle.dumps(['password', password]))
-        sleep(1.5)
+        # print('test1', self.data)
+        sleep(2.5)
+        # print('test2', self.data)
 
     def send_name(self):
         """Отправка имени на сервер"""
@@ -75,7 +88,6 @@ class Client:
 
     def welcome(self):
         """Приветственное сообщение"""
-        print(self.data)
         self.username = self.data.split(" ")[1]
         logging.info(f"Клиент {self.sock.getsockname()} прошел авторизацию!")
 

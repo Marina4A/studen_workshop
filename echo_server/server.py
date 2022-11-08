@@ -4,6 +4,7 @@ import json
 import pickle
 from threading import Thread
 import logging
+from time import sleep
 
 from validation import free_port, port_validation
 
@@ -28,13 +29,15 @@ class Server:
         """
         Запуск сервера
         """
-        self.sock = socket.socket()
-        self.sock.bind(('', self.port))
-        self.sock.listen(5)
+        sock = socket.socket()
+        sock.bind(('', self.port))
+        sock.listen(5)
+        self.sock = sock
         logging.info(f'Сервер запущен! Порт {self.port}.')
         while True:
             conn, addr = self.sock.accept()
-            Thread(target=self.listen_client, args=(conn, addr)).start()  # ??? что это?
+            Thread(target=self.listen_client, args=(conn, addr)).start()
+            sleep(1)
             logging.info(f"Подключился клиент {addr}")
             self.clients.append(conn)
 
@@ -149,7 +152,9 @@ class Server:
         returns:
             boolean: True/False
         """
+        print('Проверка пароля')
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
+        print('Проверка пароля', key == userpassword)
         return key == userpassword
 
     def hash_generation(self, password):
