@@ -78,43 +78,38 @@ class Server:
         :param address: IP-адрес и номер соединения
         :param conn: сокет
         """
-        registration_user = True
-        validation = 0
+
+        name_user = None
 
         try:
             self.users_authorization = self.read_json()
-        except json.decoder.JSONDecodeError:
-            registration_user = False
-
-        if registration_user:
-            for users in self.users_authorization:
-                if address[0] in users:
-                    for key, value in users.items():
-                        if key == address[0]:
-                            name = value['name']
-                            conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
-                            name_user = pickle.loads(conn.recv(1024))[1]
-                            if self.check_name(name, name_user):
-                                registration_user = False
-                                validation += 1
-                                logging.info(f'Пользователь с именем "{name_user}" найден!')
-                            password_user = value['password']
+            print(f'{self.users_authorization=}')
+            for values in self.users_authorization:
+                print(f'{values=}')
+                if address[0] in values:
+                    conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
+                    name_user = pickle.loads(conn.recv(1024))[1]
+                    for user in values[address[0]]:
+                        if self.check_name(user['name'], name_user):
+                            print(f'Пользователь {name_user} найден')
+                        else:
+                            raise ValueError
+                        while True:
                             conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
                             passwd = pickle.loads(conn.recv(1024))[1]
-                            if self.check_password(passwd, password_user):
+
+                            if self.check_password(passwd, user['password']):
+                                print('Пароль верный')
                                 logging.info(f'Пароль "{passwd}" верный!')
-                                conn.sendall(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
-                                validation += 1
+                                conn.sendall(pickle.dumps(["success", f"Приветствую, {name_user}"]))
+
                                 break
                             else:
-                                self.authorization(address, conn)
-                if validation == 3:
-                    logging.info(f'Данные корректны!')
-                    break
-
-        if not registration_user:
-            print('Попали в регистрацию')
-            self.registration(address, conn)
+                                conn.sendall(pickle.dumps(["passwd", "пароль не верный"]))
+                else:
+                    raise ValueError
+        except (json.decoder.JSONDecodeError, ValueError):
+            self.registration(address, conn, name_user)
 
     def broadcast(self, messenger, conn, address, username):
         """
@@ -137,7 +132,7 @@ class Server:
             users_text = json.load(file)
         return users_text
 
-    def registration(self, address, conn):
+    def registration(self, address, conn, name):
         """
         Регистрация новых пользователей
         и добавление информации о них в json файл
@@ -145,12 +140,21 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
-        name = pickle.loads(conn.recv(1024))[1]
+        conn.sendall(pickle.dumps(["passwd", "Регистрация нового пользователя"]))
+        if name is None:
+            conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
+            name = pickle.loads(conn.recv(1024))[1]
         conn.sendall(pickle.dumps(["password", "запрашивает пароль"]))
         password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
         conn.sendall(pickle.dumps(["success", f"Приветствую, {name}"]))
-        self.users_authorization.append({address[0]: {'name': name, 'password': password}})
+        print(address, name, password)
+        for index, addr in enumerate(self.users_authorization):
+            if addr == address[0]:
+                self.users_authorization[index].append([{'name': name, 'password': password}])
+                break
+        else:
+            self.users_authorization.append({address[0]:[{'name': name, 'password': password}]})
+
         self.write_json()
         self.users_authorization = self.read_json()
 
@@ -171,6 +175,7 @@ class Server:
             boolean: True/False
         """
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
+        print(key, userpassword)
         return key == userpassword
 
     def check_name(self, name, username):

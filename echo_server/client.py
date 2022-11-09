@@ -52,7 +52,6 @@ class Client:
         sleep(1)
         while True:
             if 'Здравствуйте' in self.data or 'Приветствую' in self.data:
-                print('Логин и пароль верны!')
                 self.welcome()
                 break
             elif self.data == 'запрашивает пароль':
@@ -60,6 +59,7 @@ class Client:
             elif self.data == 'запрашивает имя':
                 self.send_name()
         while True:
+            sleep(1.5)
             self.message = input(f'\n{self.username}, ведите сообщение ("exit" для выхода):')
             if self.message != "":
                 if self.message.lower() == 'exit':
@@ -94,7 +94,7 @@ class Client:
         else:
             method = 'w'
         with open(f'{self.username}.txt', method, encoding='utf-8') as client_file:
-            client_file.write(f'Время:{time:<10}| Имя:{self.username:<15} {self.message}')
+            client_file.write(f'Время:{time} Имя:{self.username} Сообщение: {self.message}')
         logging.info(f'Добавили историю в файл')
 
     def send_password(self):
@@ -125,6 +125,7 @@ class Client:
                              f"данные от сервера: {pickle.loads(self.data)[1]}")
                 self.data = pickle.loads(self.data)[1]
                 print(f"Сервер: {self.data}\n", end='')
+                sleep(1)
             except OSError:
                 break
 
