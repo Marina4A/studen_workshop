@@ -79,14 +79,14 @@ class Server:
         :param conn: сокет
         """
         registration_user = True
+        validation = 0
 
         try:
             self.users_authorization = self.read_json()
         except json.decoder.JSONDecodeError:
             registration_user = False
-            self.registration(address, conn)
 
-        if not registration_user:
+        if registration_user:
             for users in self.users_authorization:
                 if address[0] in users:
                     for key, value in users.items():
@@ -96,15 +96,24 @@ class Server:
                             name_user = pickle.loads(conn.recv(1024))[1]
                             if self.check_name(name, name_user):
                                 registration_user = False
+                                validation += 1
                                 logging.info(f'Пользователь с именем "{name_user}" найден!')
                             password_user = value['password']
                             conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
                             passwd = pickle.loads(conn.recv(1024))[1]
                             if self.check_password(passwd, password_user):
+                                logging.info(f'Пароль "{passwd}" верный!')
                                 conn.sendall(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
+                                validation += 1
+                                break
                             else:
                                 self.authorization(address, conn)
-        if registration_user:
+                if validation == 3:
+                    logging.info(f'Данные корректны!')
+                    break
+
+        if not registration_user:
+            print('Попали в регистрацию')
             self.registration(address, conn)
 
     def broadcast(self, messenger, conn, address, username):
@@ -136,7 +145,6 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        print('Попали в регистрацию.')
         conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
         name = pickle.loads(conn.recv(1024))[1]
         conn.sendall(pickle.dumps(["password", "запрашивает пароль"]))

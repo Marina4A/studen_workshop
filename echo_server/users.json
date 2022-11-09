@@ -16,5 +16,17 @@
             "name": "Anna",
             "password": "0dde5185db7da5c81f0fa71696506e4f"
         }
+    },
+    {
+        "127.0.0.1": {
+            "name": "Marina",
+            "password": "00495f4a86847661888f0b2b9661693c"
+        }
+    },
+    {
+        "127.0.0.1": {
+            "name": "Marina",
+            "password": "00495f4a86847661888f0b2b9661693c"
+        }
     }
 ]

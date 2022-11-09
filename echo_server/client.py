@@ -6,6 +6,9 @@ import pickle
 from validation import ip_validation, port_validation
 # from getpass import getpass
 from time import sleep
+import os
+import datetime
+
 
 logging.basicConfig(filename='log/client.log', encoding='utf-8',
                     format="%(asctime)s [%(levelname)s] %(funcName)s: %(message)s", level=logging.INFO)
@@ -48,7 +51,7 @@ class Client:
         Thread(target=self.data_acquisition).start()
         sleep(1)
         while True:
-            if 'Здравствуйте' in self.data:
+            if 'Здравствуйте' in self.data or 'Приветствую' in self.data:
                 print('Логин и пароль верны!')
                 self.welcome()
                 break
@@ -57,16 +60,42 @@ class Client:
             elif self.data == 'запрашивает имя':
                 self.send_name()
         while True:
-            sleep(1)
             self.message = input(f'\n{self.username}, ведите сообщение ("exit" для выхода):')
             if self.message != "":
                 if self.message.lower() == 'exit':
                     logging.info(f"Разрыв соединения {self.sock.getsockname()} с сервером!")
                     break
+                time_now = datetime.datetime.now()
+                self.write_history(time_now)
                 send_message = pickle.dumps(['message', self.message, self.username])
                 self.sock.sendall(send_message)
                 logging.info(f"Отправка данных от {self.sock.getsockname()} на сервер: {self.message}")
+            elif self.message == 'show logs':
+                self.show_log()
+            elif self.message == 'clean logs':
+                self.clean_log()
         self.sock.close()
+
+    def show_log(self):
+        with open('client.log', 'r', encoding='utf-8') as client_file:
+            for element in client_file:
+                print(element)
+        logging.info(f'Вывели логи на экран.')
+
+    def clean_log(self):
+        with open('client.log', 'w', encoding='utf-8') as client_file:
+            client_file.write('')
+        logging.info(f'Очистка логов пользователя.')
+
+    def write_history(self, time):
+        path = os.getcwd()
+        if os.path.exists(os.path.join(path, self.username)):
+            method = 'a+'
+        else:
+            method = 'w'
+        with open(f'{self.username}.txt', method, encoding='utf-8') as client_file:
+            client_file.write(f'Время:{time:<10}| Имя:{self.username:<15} {self.message}')
+        logging.info(f'Добавили историю в файл')
 
     def send_password(self):
         """Отправка пароля на сервер"""
@@ -92,7 +121,6 @@ class Client:
                 self.data = self.sock.recv(1024)
                 if not self.data:
                     sys.exit(0)
-                # print(f"\n{pickle.loads(self.data)[1]} -->", pickle.loads(self.data)[0])
                 logging.info(f"Клиент {self.sock.getsockname()} принял "
                              f"данные от сервера: {pickle.loads(self.data)[1]}")
                 self.data = pickle.loads(self.data)[1]
