@@ -70,7 +70,6 @@ class Client:
 
     def send_password(self):
         """Отправка пароля на сервер"""
-        # password = getpass(self.data)
         password = input('Введите пароль:')
         self.sock.sendall(pickle.dumps(['password', password]))
         sleep(1.5)

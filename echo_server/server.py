@@ -86,24 +86,26 @@ class Server:
             registration_user = False
             self.registration(address, conn)
 
-        for users in self.users_authorization:
-            if address[0] in users:
-                for key, value in users.items():
-                    if key == address[0]:
-                        name = value['name']
-                        conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
-                        name_user = pickle.loads(conn.recv(1024))[1]
-                        if self.check_name(name, name_user):
-                            logging.info(f'Пользователь с именем "{name_user}" найден!')
-                        password_user = value['password']
-                        conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
-                        passwd = pickle.loads(conn.recv(1024))[1]
-                        if self.check_password(passwd, password_user):
-                            conn.sendall(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
-                        else:
-                            self.authorization(address, conn)
-                        if registration_user:
-                            self.registration(address, conn, name_user, passwd)
+        if not registration_user:
+            for users in self.users_authorization:
+                if address[0] in users:
+                    for key, value in users.items():
+                        if key == address[0]:
+                            name = value['name']
+                            conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
+                            name_user = pickle.loads(conn.recv(1024))[1]
+                            if self.check_name(name, name_user):
+                                registration_user = False
+                                logging.info(f'Пользователь с именем "{name_user}" найден!')
+                            password_user = value['password']
+                            conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
+                            passwd = pickle.loads(conn.recv(1024))[1]
+                            if self.check_password(passwd, password_user):
+                                conn.sendall(pickle.dumps(["success", f"Здравствуйте, {name_user}"]))
+                            else:
+                                self.authorization(address, conn)
+        if registration_user:
+            self.registration(address, conn)
 
     def broadcast(self, messenger, conn, address, username):
         """
@@ -115,7 +117,6 @@ class Server:
         """
         username += f"_{address[1]}"
         for sock in self.clients:
-            print(sock)
             if sock == conn:
                 data = pickle.dumps(["message", messenger, username])
                 sock.sendall(data)
@@ -125,10 +126,9 @@ class Server:
         """Чтение файла с авторизованными пользователями"""
         with open(self.users, 'r', encoding='utf-8') as file:
             users_text = json.load(file)
-        print(users_text)
         return users_text
 
-    def registration(self, address, conn, name=None, password=None):
+    def registration(self, address, conn):
         """
         Регистрация новых пользователей
         и добавление информации о них в json файл
@@ -136,13 +136,12 @@ class Server:
             :param address: IP-адрес и номер соединения
             :param conn: сокет
         """
-        print(address, conn, name, password)
-        if name is None or password is None:
-            conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
-            name = pickle.loads(conn.recv(1024))[1]
-            conn.sendall(pickle.dumps(["password", "запрашивает пароль"]))
-            password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
-            conn.sendall(pickle.dumps(["success", f"Приветствую, {name}"]))
+        print('Попали в регистрацию.')
+        conn.sendall(pickle.dumps(["name", "запрашивает имя"]))
+        name = pickle.loads(conn.recv(1024))[1]
+        conn.sendall(pickle.dumps(["password", "запрашивает пароль"]))
+        password = self.hash_generation(pickle.loads(conn.recv(1024))[1])
+        conn.sendall(pickle.dumps(["success", f"Приветствую, {name}"]))
         self.users_authorization.append({address[0]: {'name': name, 'password': password}})
         self.write_json()
         self.users_authorization = self.read_json()
@@ -151,7 +150,7 @@ class Server:
         """
         Запись пользователей в json-файл
         """
-        with open(self.users, 'a+', encoding='utf-8') as file:
+        with open(self.users, 'w', encoding='utf-8') as file:
             json.dump(self.users_authorization, file, indent=4)
 
     def check_password(self, password, userpassword):
