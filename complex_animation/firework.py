@@ -28,9 +28,9 @@ class Head:
         if self.boom:
             self.start_x = x  # стартовое положение точки
             self.start_y = y  # стартовое положение точки
-            self.v0X = random.randint(-300, 300) / 20  # скорость по Х
-            self.v0Y = random.randint(-300, 300) / 20  # скорость по Y
-            distance = random.randint(5, 20)  # дистанция от центра
+            self.v0X = randint(-300, 300) / 20  # скорость по Х
+            self.v0Y = randint(-300, 300) / 20  # скорость по Y
+            distance = randint(5, 20)  # дистанция от центра
             mlen = (self.v0X ** 2 + self.v0Y ** 2) ** (
                 0.5)  # Вычисляем диагональ треугольника вектора скорости до увеличения
             if mlen != 0:
