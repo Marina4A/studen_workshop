@@ -130,6 +130,5 @@ class Firework(Sprite):
         for head in self.ls_head:
             for tail in head.ls_tail:
                 firework_particles.append(tail)
-        # firework_particles.sort(key=lambda x: sum(x.color)) # сортировка по цвету (затухание)
         for particles in firework_particles:
             pygame.draw.circle(self.screen, particles.color, [particles.x, particles.y], particles.size, 0)
