@@ -40,7 +40,7 @@ class Workspace:
         if (self.snake.x, self.snake.y) == self.food:
             self._create_food()
             self.snake.max_lenght += 1
-            pygame.display.set_caption(str(self.snake.max_lenght-1))  # имя дисцплея
+            pygame.display.set_caption(str(self.snake.max_lenght - 1))  # имя дисцплея
 
     def _restart(self):
         self.snake = Snake(self)  # создание объекта "змейка"
@@ -55,10 +55,6 @@ class Workspace:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
-            elif event.type == pygame.KEYUP:
-                self._check_keyup_events(event)
-            # elif event.type == pygame.MOUSEBUTTONDOWN:
-            #     mouse_pos = pygame.mouse.get_pos()
 
     def _check_keydown_events(self, event):
         """Реагирует на нажатие клавиш."""
@@ -74,10 +70,6 @@ class Workspace:
             self.snake.left()
         elif event.key == 32:
             self._restart()
-
-    def _check_keyup_events(self, event):
-        """Реагирует на отпускание клавиш."""
-        pass
 
     def _gen_frame(self):
         '''Определяет границы игры'''

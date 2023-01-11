@@ -2,9 +2,9 @@
 from pygame.sprite import Sprite
 
 
-class Ball(Sprite):
+class Eat(Sprite):
     """
-    Шарик
+    Еда змейки
     """
     def __init__(self, color, x, y):
         """

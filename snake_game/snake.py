@@ -1,6 +1,6 @@
 from random import randint
 import pygame
-from ball import Ball
+from eat import Eat
 from pygame.sprite import Sprite
 
 GREEN = (0, 255, 0)
@@ -17,7 +17,7 @@ class Snake(Sprite):
         self.rect = ai_game.rect
         self.color = (randint(0, 255), randint(0, 255), randint(0, 255))
         self._set_start_position()
-        self.tail = [Ball(self.color, self.x, self.y)]
+        self.tail = [Eat(self.color, self.x, self.y)]
         self.max_lenght = 1
         self.speed_x, self.speed_y = 0, 0
         self.up()
@@ -71,7 +71,7 @@ class Snake(Sprite):
         elif self.y > y1 - self.settings.size - 1:
             self.y = y0 + 1
 
-        self.tail.append(Ball(self.color, self.x, self.y))
+        self.tail.append(Eat(self.color, self.x, self.y))
         if len(self.tail) > self.max_lenght:
             self.tail.pop(0)
 
