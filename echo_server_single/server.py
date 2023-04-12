@@ -50,7 +50,6 @@ class Server:
             while True:
                 # Получаем данные от клиента (порциями по 1 КБ)
                 data = client_socket.recv(1024)
-                #print("Тип данных data", type(data))
 
                 # Если нет данных, то клиент закрыл соединение
                 if not data:
@@ -60,10 +59,17 @@ class Server:
                 print(f"Received {len(data)} bytes from the client")
 
                 # Отправляем данные обратно клиенту
-                client_socket.sendall(data)
+                try:
+                    client_socket.sendall(data)
+                    print(f"Sent {len(data)} bytes back to the client")
+                except socket.error as e:
+                    print(f"Error occurred while sending data: {e}")
+                    break
 
         # Выводим сообщение об отключении клиента
         print("Client disconnected")
+
+
 
     def stop(self) -> None:
         """
