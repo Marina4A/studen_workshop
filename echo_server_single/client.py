@@ -1,7 +1,7 @@
 import socket
 
 HOST = '127.0.0.1'
-PORT = 8001
+PORT = 8002
 
 
 class Client:
@@ -39,14 +39,24 @@ class Client:
                 # Check if the socket is still open before calling recv()
                 if self.socket.fileno() == -1:
                     break
+
+                # Receive data from the server
                 chunk = self.socket.recv(1024)
+
+                # If no more data is being received, break out of the loop
                 if not chunk:
                     break
+
                 received_data += chunk
+
+                # Check if we have received all the data
+                if len(received_data) >= int(received_data[:8]):
+                    break
+
             except socket.error as e:
-               # Handle socket exception here
-               print("Socket error occurred:", e)
-               break
+                # Handle socket exception here
+                print("Socket error occurred:", e)
+                break
 
         # Print message about successful receiving of data
         print(f"Received {len(received_data)} bytes from the server")
@@ -74,7 +84,11 @@ if __name__ == "__main__":
     # Send the message to the server and receive the response
     response = client.send_data(message.encode('utf-8'))
 
-    # Print the response from the server
-    print(response.decode('utf-8'))
+    # Check that a response was received from the server
+    if response:
+        print(response.decode('utf-8'))
+    else:
+        print("No response received from the server")
 
+    # Disconnect from the server
     client.disconnect()

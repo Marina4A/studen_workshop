@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 HOST = '127.0.0.1'
-PORT = 8001
+PORT = 8002
 
 
 class Server:
