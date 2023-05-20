@@ -72,6 +72,46 @@ class Server:
                 logging.info(f"Отключение клиента {address}!")
                 break
 
+    # def authorize_user(self, address, conn):
+    #     name_user = None
+    #
+    #     try:
+    #         self.users_authorization = self.read_json()
+    #         logging.debug(f'users_authorization: {self.users_authorization=}')
+    #
+    #         # Get user data based on IP address
+    #         user_data = self.users_authorization.get(address[0])
+    #         if user_data:
+    #             conn.sendall(pickle.dumps(["passwd", "запрашивает имя"]))
+    #             name_user = pickle.loads(conn.recv(1024))[1]
+    #
+    #             found_user = any(user for user in user_data if self.check_name(user['name'], name_user))
+    #             if found_user:
+    #                 logging.debug(f'User {name_user} has been found')
+    #
+    #                 while True:
+    #                     conn.sendall(pickle.dumps(["passwd", "запрашивает пароль"]))
+    #                     passwd = pickle.loads(conn.recv(1024))[1]
+    #
+    #                     if self.check_password(passwd, user['password']):
+    #                         logging.info(f'Password "{passwd}" correct!')
+    #                         conn.sendall(pickle.dumps(["success", f"Приветствую, {name_user}"]))
+    #                         break
+    #                     else:
+    #                         conn.sendall(pickle.dumps(["passwd", "пароль не верный"]))
+    #             else:
+    #                 raise ValueError
+    #         else:
+    #             raise ValueError
+    #
+    #     except json.decoder.JSONDecodeError as err:
+    #         logging.error(f'Unable to decode JSON: {err}')
+    #         self.registration(address, conn, name_user)
+    #
+    #     except ValueError as err:
+    #         logging.error(f'Error occurred: {err}')
+    #         self.registration(address, conn, name_user)
+
     def authorization(self, address, conn):
         """
         Авторизация пользователя на сервере
@@ -206,7 +246,7 @@ def main():
     Проверка корректности порта
     Запуск сервера
     """
-    port = 2000
+    port = 2002
     IP = "127.0.0.1"
     if not port_validation(port):
         if not free_port(port):

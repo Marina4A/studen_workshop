@@ -51,12 +51,13 @@ class Client:
         Thread(target=self.data_acquisition).start()
         sleep(1)
         while True:
+            #print('self.data -', self.data, type(self.data))
             if 'Здравствуйте' in self.data or 'Приветствую' in self.data:
                 self.welcome()
                 break
             elif self.data == 'запрашивает пароль':
                 self.send_password()
-            elif self.data == 'запрашивает имя':
+            elif self.data in ('запрашивает имя', "Регистрация нового пользователя"):
                 self.send_name()
         while True:
             sleep(1.5)
@@ -105,6 +106,7 @@ class Client:
 
     def send_name(self):
         """Отправка имени на сервер"""
+        print('Запрос')
         self.username = input(f"Введите имя:")
         self.sock.sendall(pickle.dumps(["name", self.username]))
         sleep(1.5)
@@ -135,7 +137,7 @@ def main():
     Ввод порта и ip сервера, валидация данных
     """
     IP_DEFAULT = "127.0.0.1"
-    PORT_DEFAULT = 2001
+    PORT_DEFAULT = 2002
 
     user_port = input("Введите порт (enter для значения по умолчанию):")
     if not port_validation(user_port):
