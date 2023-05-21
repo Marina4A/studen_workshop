@@ -6,156 +6,122 @@
 from tkinter import *
 import mysql.connector
 
-# root = Tk()
-# root.mainloop()
-#
-#
-# mydb = mysql.connector.connect(
-#   host="localhost",
-#   user="username",
-#   password="password",
-#   database="database_name"
-# )
-#
-# mycursor = mydb.cursor()
-#
-# mycursor.execute("SELECT * FROM table_name")
-#
-# myresult = mycursor.fetchall()
-#
-# for x in myresult:
-#   print(x)
-#
-#
-# sql = "INSERT INTO table_name (column1, column2, column3) VALUES (%s, %s, %s)"
-# val = ("value1", "value2", "value3")
-# mycursor.execute(sql, val)
-#
-# mydb.commit()
-#
-# print(mycursor.rowcount, "record inserted.")
-#
-# mycursor.execute("UPDATE table_name SET column1 = 'new_value' WHERE id = '1'")
-#
-# mydb.commit()
-#
-# print(mycursor.rowcount, "record(s) affected")
-#
-# mycursor.execute("DELETE FROM table_name WHERE id = '1'")
-#
-# mydb.commit()
-#
-# print(mycursor.rowcount, "record(s) deleted")
-#
-#
-# def add_record():
-#   sql = "INSERT INTO table_name (column1, column2, column3) VALUES (%s, %s, %s)"
-#   val = (entry1.get(), entry2.get(), entry3.get())
-#   mycursor.execute(sql, val)
-#   mydb.commit()
-#   print(mycursor.rowcount, "record inserted.")
-#
-#
-# Button(root, text="Add Record", command=add_record).pack()
-#
-# entry1 = Entry(root)
-# entry1.pack()
-#
-# entry2 = Entry(root)
-# entry2.pack()
-#
-# entry3 = Entry(root)
-# entry3.pack()
 
-def add_record():
-  sql = "INSERT INTO customers (name, address, phone) VALUES (%s, %s, %s)"
-  values = (name_entry.get(), address_entry.get(), phone_entry.get())
-  mycursor.execute(sql, values)
-  mydb.commit()
-  clear_fields()
+class RecordManager:
+    def __init__(self, host, user, password, database):
+        self.mydb = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=database
+        )
+        self.cursor = self.mydb.cursor()
 
+        # Create GUI elements
+        self.root = Tk()
+        self.root.title("Auto Service App")
 
-def remove_record():
-  sql = "DELETE FROM customers WHERE name = %s"
-  value = (name_entry.get(),)
-  mycursor.execute(sql, value)
-  mydb.commit()
-  clear_fields()
+        self.name_entry = Entry(self.root, width=30)
+        self.name_entry.grid(row=0, column=1, padx=20)
 
+        self.address_entry = Entry(self.root, width=30)
+        self.address_entry.grid(row=1, column=1)
 
-def update_record():
-  sql = "UPDATE customers SET address = %s, phone = %s WHERE name = %s"
-  values = (address_entry.get(), phone_entry.get(), name_entry.get())
-  mycursor.execute(sql, values)
-  mydb.commit()
-  clear_fields()
+        self.phone_entry = Entry(self.root, width=30)
+        self.phone_entry.grid(row=2, column=1)
 
+        self.age_entry = Entry(self.root, width=30)
+        self.age_entry.grid(row=3, column=1)
 
-def view_records():
-  mycursor.execute("SELECT * FROM customers")
-  records = mycursor.fetchall()
-  display_records(records)
+        self.name_label = Label(self.root, text="Name")
+        self.name_label.grid(row=0, column=0)
 
+        self.address_label = Label(self.root, text="Address")
+        self.address_label.grid(row=1, column=0)
 
-def display_records(records):
-  for index, record in enumerate(records):
-    display = Label(root, text=record)
-    display.grid(row=index + 5, column=0, padx=10, pady=5, columnspan=3)
+        self.phone_label = Label(self.root, text="Phone Number")
+        self.phone_label.grid(row=2, column=0)
+
+        self.age_label = Label(self.root, text="Age")
+        self.age_label.grid(row=3, column=0)
+
+        self.add_btn = Button(self.root, text="Add Record", command=self.add_record)
+        self.add_btn.grid(row=4, column=0, pady=20)
+
+        self.remove_btn = Button(self.root, text="Remove Record", command=self.remove_record)
+        self.remove_btn.grid(row=4, column=1)
+
+        self.update_btn = Button(self.root, text="Update Record", command=self.update_record)
+        self.update_btn.grid(row=4, column=2)
+
+        self.view_btn = Button(self.root, text="View Records", command=self.view_records)
+        self.view_btn.grid(row=5, column=0, columnspan=3, pady=20)
+
+    def add_record(self):
+        sql = "INSERT INTO customers (name, address, phone, age) VALUES (%s, %s, %s, %s)"
+        values = (self.name_entry.get(), self.address_entry.get(), self.age_entry.get(), self.phone_entry.get())
+        self.cursor.execute(sql, values)
+        self.mydb.commit()
+        self.clear_fields()
+
+    def remove_record(self):
+        sql = "DELETE FROM customers WHERE name = %s"
+        value = (self.name_entry.get(),)
+        self.cursor.execute(sql, value)
+        self.mydb.commit()
+        self.clear_fields()
+
+    def update_record(self):
+        sql = "UPDATE customers SET address = %s, phone = %s, age = %s WHERE name = %s"
+        values = (self.address_entry.get(), self.phone_entry.get(), self.age_entry.get(), self.name_entry.get())
+        self.cursor.execute(sql, values)
+        self.mydb.commit()
+        self.clear_fields()
+
+    def view_records(self):
+        self.cursor.execute("SELECT * FROM customers")
+        records = self.cursor.fetchall()
+        self.display_records(records)
+
+    def display_records(self, records):
+        row_counter = 6
+        for record in records:
+            display = Label(self.root, text=record)
+            display.grid(row=row_counter, column=0, padx=10, pady=5, columnspan=3)
+            row_counter += 1
+
+    def clear_fields(self):
+        self.name_entry.delete(0, END)
+        self.address_entry.delete(0, END)
+        self.phone_entry.delete(0, END)
+        self.age_entry.delete(0, END)
 
 
-def clear_fields():
-  name_entry.delete(0, END)
-  address_entry.delete(0, END)
-  phone_entry.delete(0, END)
+    def start(self):
+        self.cursor.execute("DROP DATABASE mydatabase;")
+
+        # Создаем базу данных "mydatabase", если ее нет
+        self.cursor.execute("CREATE DATABASE IF NOT EXISTS mydatabase;")
+
+        # Переключаемся на базу данных "mydatabase"
+        self.cursor.execute("USE mydatabase")
+
+        # Здесь создаем таблицу "customers" со столбцами "name", "address", "age", "phone"
+        self.cursor.execute(
+            "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), "
+            "address VARCHAR(255), age INT, phone VARCHAR(20));")
+        self.mydb.commit()
+
+        self.root.mainloop()
 
 
+if __name__ == '__main__':
+    config = {
+        "host": "127.0.0.1",
+        "user": "root",
+        "password": "Andreevna1501",
+        "database": None
+    }
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="yourusername",
-  password="yourpassword",
-  database="database_name"
-)
-
-mycursor = mydb.cursor()
-
-
-root = Tk()
-root.title("Auto Service App") # Заголовок окна
-
-# Добавление элементов интерфейса
-root.mainloop()
-
-
-# Создание полей ввода
-name_entry = Entry(root, width=30)
-name_entry.grid(row=0, column=1, padx=20)
-
-address_entry = Entry(root, width=30)
-address_entry.grid(row=1, column=1)
-
-phone_entry = Entry(root, width=30)
-phone_entry.grid(row=2, column=1)
-
-# Создание меток
-name_label = Label(root, text="Name")
-name_label.grid(row=0, column=0)
-
-address_label = Label(root, text="Address")
-address_label.grid(row=1, column=0)
-
-phone_label = Label(root, text="Phone Number")
-phone_label.grid(row=2, column=0)
-
-# Создание кнопок
-add_btn = Button(root, text="Add Record", command=add_record)
-add_btn.grid(row=3, column=0, pady=20)
-
-remove_btn = Button(root, text="Remove Record", command=remove_record)
-remove_btn.grid(row=3, column=1)
-
-update_btn = Button(root, text="Update Record", command=update_record)
-update_btn.grid(row=3, column=2)
-
-view_btn = Button(root, text="View Records", command=view_records)
-view_btn.grid(row=4, column=0, columnspan=3, pady=20)
+    manager = RecordManager(**config)
+    manager.start()
