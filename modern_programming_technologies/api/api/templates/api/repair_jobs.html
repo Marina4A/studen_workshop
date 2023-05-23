@@ -1,0 +1,39 @@
+{% extends 'api/base.html' %}
+
+{% block title %}Ремонтные работы{% endblock %}
+
+{% block content %}
+<h1>Ремонтные работы</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Марка автомобиля</th>
+            <th>Модель автомобиля</th>
+            <th>Описание</th>
+            <th>Стоимость</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in repair_jobs %}
+        <tr>
+            <td>{{ job.id }}</td>
+            <td>{{ job.car_make }}</td>
+            <td>{{ job.car_model }}</td>
+            <td>{{ job.description }}</td>
+            <td>{{ job.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="POST" action="{% url 'repair_job_create' %}">
+    {% csrf_token %}
+    <input type="text" name="car_make" placeholder="Марка автомобиля">
+    <input type="text" name="car_model" placeholder="Модель автомобиля">
+    <input type="text" name="description" placeholder="Описание">
+    <input type="number" step="0.01" name="price" placeholder="Стоимость">
+    <button type="submit">Добавить работу</button>
+</form>
+{% endblock %}
