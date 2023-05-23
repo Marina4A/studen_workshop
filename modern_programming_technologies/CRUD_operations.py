@@ -84,11 +84,29 @@ class RecordManager:
         self.display_records(records)
 
     def display_records(self, records):
-        row_counter = 6
-        for record in records:
-            display = Label(self.root, text=record)
-            display.grid(row=row_counter, column=0, padx=10, pady=5, columnspan=3)
-            row_counter += 1
+        # Clear previous display
+        for child in self.root.winfo_children():
+            if isinstance(child, Frame):
+                child.destroy()
+
+        # Create header row
+        header = Frame(self.root)
+        header.grid(row=6, column=0, padx=10, pady=5)
+        Label(header, text="ID", width=5, anchor=W).grid(row=0, column=0)
+        Label(header, text="Name", width=20, anchor=W).grid(row=0, column=1)
+        Label(header, text="Address", width=30, anchor=W).grid(row=0, column=2)
+        Label(header, text="Age", width=5, anchor=W).grid(row=0, column=3)
+        Label(header, text="Phone", width=15, anchor=W).grid(row=0, column=4)
+
+        # Populate data rows
+        for row, record in enumerate(records, start=7):
+            row_frame = Frame(self.root)
+            row_frame.grid(row=row, column=0, padx=10, pady=5)
+            Label(row_frame, text=record[0], width=5, anchor=W).grid(row=0, column=0)
+            Label(row_frame, text=record[1], width=20, anchor=W).grid(row=0, column=1)
+            Label(row_frame, text=record[2], width=30, anchor=W).grid(row=0, column=2)
+            Label(row_frame, text=record[3], width=5, anchor=W).grid(row=0, column=3)
+            Label(row_frame, text=record[4], width=15, anchor=W).grid(row=0, column=4)
 
     def clear_fields(self):
         self.name_entry.delete(0, END)
