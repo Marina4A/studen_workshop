@@ -246,7 +246,7 @@ def main():
     Проверка корректности порта
     Запуск сервера
     """
-    port = 2002
+    port = 2001
     IP = "127.0.0.1"
     if not port_validation(port):
         if not free_port(port):

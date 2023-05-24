@@ -9,7 +9,6 @@ from time import sleep
 import os
 import datetime
 
-
 logging.basicConfig(filename='log/client.log', encoding='utf-8',
                     format="%(asctime)s [%(levelname)s] %(funcName)s: %(message)s", level=logging.INFO)
 
@@ -44,14 +43,14 @@ class Client:
             sys.exit(0)
         self.sock = sock
         logging.info(
-                f"Установлено соединение {self.sock.getsockname()} с сервером ('{self.server_ip}', {self.port})")
+            f"Установлено соединение {self.sock.getsockname()} с сервером ('{self.server_ip}', {self.port})")
 
     def message_receiving(self):
         """Ввод сообщения, проверка на exit для выхода"""
         Thread(target=self.data_acquisition).start()
         sleep(1)
         while True:
-            #print('self.data -', self.data, type(self.data))
+            # print('self.data -', self.data, type(self.data))
             if 'Здравствуйте' in self.data or 'Приветствую' in self.data:
                 self.welcome()
                 break
@@ -137,7 +136,7 @@ def main():
     Ввод порта и ip сервера, валидация данных
     """
     IP_DEFAULT = "127.0.0.1"
-    PORT_DEFAULT = 2002
+    PORT_DEFAULT = 2001
 
     user_port = input("Введите порт (enter для значения по умолчанию):")
     if not port_validation(user_port):
