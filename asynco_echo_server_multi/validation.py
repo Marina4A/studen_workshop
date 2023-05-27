@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 
 async def port_validation(port: str) -> bool:
@@ -21,6 +22,18 @@ async def free_port(port: str) -> bool:
         except (socket.timeout, ConnectionRefusedError):
             # Порт свободен
             return True
+
+# async def free_port(port: int) -> bool:
+#     with ThreadPoolExecutor() as pool:
+#         result = await asyncio.get_running_loop().run_in_executor(
+#             pool, lambda: _free_port(port)
+#         )
+#         return result
+#
+#
+# def _free_port(port: int) -> bool:
+#     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+#         return sock.connect_ex(('localhost', port)) != 0
 
 
 async def ip_validation(ip_address: list[str]) -> bool:

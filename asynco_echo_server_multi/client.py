@@ -1,13 +1,9 @@
 import asyncio
 import logging
 import os
-import pickle
 import socket
 import sys
 from datetime import datetime
-from threading import Thread
-
-from validation import ip_validation, port_validation
 
 logging.basicConfig(filename='log/client.log', encoding='utf-8',
                     format="%(asctime)s [%(levelname)s] %(funcName)s: %(message)s", level=logging.INFO)
@@ -18,7 +14,7 @@ class Client:
     Клиент
     """
 
-    def __init__(self, server_ip, port):
+    def __init__(self, server_ip="127.0.0.1", port=2005):
         """
         Args:
             server_ip (str): localhost/ip-адресс сервера
@@ -34,74 +30,79 @@ class Client:
         """
         Ввод порта и ip сервера, валидация данных
         """
-        IP_DEFAULT = "127.0.0.1"
-        PORT_DEFAULT = 2002
+        user_port = input("Введите порт (enter для значения по умолчанию):") or self.port
 
-        user_port = input("Введите порт (enter для значения по умолчанию):")
-        if not port_validation(user_port):
-            user_port = PORT_DEFAULT
+        if not str(user_port).isdigit() or not 1024 <= int(user_port) <= 65535:
+            user_port = self.port
             print(f"Установили порт {user_port} по умолчанию!")
+        else:
+            user_port = int(user_port)
 
-        user_ip = input("Введите ip сервера (enter для значения по умолчанию):")
-        if not ip_validation(user_ip):
-            user_ip = IP_DEFAULT
+        user_ip = input("Введите ip сервера (enter для значения по умолчанию):") or self.server_ip
+        if not all(i.isdigit() or i == '.' for i in user_ip.split('.')):
+            user_ip = self.server_ip
             print(f"Установили ip-адресс {user_ip} по умолчанию!")
 
-        async with socket.socket() as sock:
-            sock.setblocking(1)
-            try:
-                await asyncio.sleep(1)  # добавляем задержку для устранения блокировки ввода-вывода
-                await sock.connect((self.server_ip, self.port))
-            except ConnectionRefusedError:
-                print(f"Не удалось присоединиться к серверу: ip-адрес: {self.server_ip}, порт: {self.port}")
+        try:
+            reader, writer = await asyncio.wait_for(
+                asyncio.open_connection(user_ip, user_port), timeout=1
+            )
+        except (OSError, asyncio.TimeoutError):
+            print(f"Не удалось присоединиться к серверу: ip-адрес: {user_ip}, порт: {user_port}")
+            sys.exit(0)
+
+        logging.info(f"Установлено соединение {writer.get_extra_info('sockname')} "
+                     f"с сервером ('{user_ip}', {user_port})")
+
+        await self.authorize(reader, writer)
+
+    async def authorize(self, reader, writer):
+        """Логика авторизации пользователя"""
+        while True:
+            data = await asyncio.wait_for(reader.readline(), timeout=1)
+            if not data:
                 sys.exit(0)
+            logging.info(f"Клиент {writer.get_extra_info('sockname')} принял данные от сервера: {data}")
+            data = data.decode().strip()
+            if 'Здравствуйте' in data or 'Приветствую' in data:
+                self.username = data.split(" ")[1]
+                logging.info(f"Клиент {writer.get_extra_info('sockname')} прошел авторизацию!")
+                break
+            elif data == 'запрашивает пароль':
+                await self.send_password(writer)
+            elif data in ('запрашивает имя', "Регистрация нового пользователя"):
+                await self.send_name(writer)
 
-            logging.info(
-                f"Установлено соединение {sock.getsockname()} с сервером ('{self.server_ip}', {self.port})")
+        task_msg_recv = asyncio.create_task(self.message_receiving(reader))
 
-            Task = asyncio.create_task(self.message_receiving(sock))
+        while True:
+            await asyncio.sleep(1)
 
-            try:
-                while True:
-                    await asyncio.sleep(1)
-            except KeyboardInterrupt:
-                print("Client is shutting down...")
-            finally:
-                Task.cancel()
-
-    async def message_receiving(self, sock):
-        """Ввод сообщения, проверка на exit для выхода"""
+    async def message_receiving(self, reader):
+        """Чтение сообщения от сервера"""
         while True:
             try:
-                data = await sock.recv(1024)
+                data = await asyncio.wait_for(reader.readline(), timeout=0.5)
                 if not data:
+                    await reader.aclose()
                     sys.exit(0)
-                logging.info(f"Клиент {sock.getsockname()} принял "
-                             f"данные от сервера: {pickle.loads(data)[1]}")
-                data = pickle.loads(data)[1]
-                if 'Здравствуйте' in data or 'Приветствую' in data:
-                    self.welcome(data)
-                elif data == 'запрашивает пароль':
-                    await self.send_password(sock)
-                elif data in ('запрашивает имя', "Регистрация нового пользователя"):
-                    await self.send_name(sock)
-
-                elif data == 'show logs':
+                logging.info(f"Клиент {reader._transport.get_extra_info('sockname')} принял "
+                             f"данные от сервера: {data}")
+                data = data.decode().strip()
+                if data == "show logs":
                     self.show_log()
-
-                elif data == 'clean logs':
+                elif data == "clean logs":
                     await self.clean_log()
-
                 else:
                     print(f"Сервер: {data}\n", end='')
 
-            except OSError:
-                break
+            except (asyncio.TimeoutError, OSError):
+                continue
 
     async def clean_log(self):
         with open('client.log', 'w', encoding='utf-8') as client_file:
             client_file.write('')
-        logging.info(f'Очистка логов пользователя.')
+        logging.info('Очистка логов пользователя.')
 
     async def write_history(self, username, message):
         path = os.getcwd()
@@ -111,25 +112,19 @@ class Client:
             method = 'w'
         with open(f'{username}.txt', method, encoding='utf-8') as client_file:
             client_file.write(f'Время:{datetime.now()} Имя:{username} Сообщение: {message}')
-        logging.info(f'Добавили историю в файл')
+        logging.info('Добавили историю в файл')
 
-    async def send_password(self, sock):
+    async def send_password(self, writer):
         """Отправка пароля на сервер"""
         password = input('Введите пароль:')
-        sock.sendall(pickle.dumps(['password', password]))
-        await asyncio.sleep(1.5)
+        writer.write(f"{password}\n".encode())
+        await writer.drain()
 
-    async def send_name(self, sock):
+    async def send_name(self, writer):
         """Отправка имени на сервер"""
-        print('Запрос')
         self.username = input(f"Введите имя:")
-        sock.sendall(pickle.dumps(["name", self.username]))
-        await asyncio.sleep(1.5)
-
-    def welcome(self, data):
-        """Приветственное сообщение"""
-        self.username = data.split(" ")[1]
-        logging.info(f"Клиент {self.sock.getsockname()} прошел авторизацию!")
+        writer.write(f"{self.username}\n".encode())
+        await writer.drain()
 
     def show_log(self):
         with open('log/client.log', 'r') as f:
@@ -138,13 +133,8 @@ class Client:
                 print(line.strip())
 
 
-async def run_client():
-    client = Client('127.0.0.1', 2002)
-
-
 if __name__ == "__main__":
-    asyncio.run(run_client())
-
+    client = Client()
 
 
 # import socket

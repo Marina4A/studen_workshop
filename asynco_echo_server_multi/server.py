@@ -3,8 +3,10 @@ import queue
 import socket
 import hashlib
 import json
-import pickle
 import logging
+from collections import defaultdict
+
+import aiofiles
 
 from validation import free_port, port_validation
 
@@ -20,12 +22,9 @@ logging.basicConfig(
 
 class Server:
     def __init__(self, ip, port):
-        """
-        :param port: Port number
-        """
         self.port = port
         self.users_authorization = {}
-        self.clients = {}
+        self.clients = defaultdict(dict)
         self.users = 'users.json'
         self.status = None
         self.ip = ip
@@ -35,9 +34,6 @@ class Server:
         self.messages_task = self.loop.create_task(self.process_messages())
 
     async def server_run(self):
-        """
-        Start the server
-        """
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind((self.ip, self.port))
         sock.listen(5)
@@ -46,17 +42,17 @@ class Server:
         while True:
             conn, addr = await self.sock.accept()
             logging.info(f"Client connected: {addr}")
-            self.clients[conn] = addr
+            self.clients[conn]['address'] = addr
             self.loop.create_task(self.listen_client(conn))
 
     async def listen_client(self, conn):
-        """
-        Send message to client, or close connection
-        Args:
-            conn (socket): socket with client data
-        """
-        address = self.clients[conn]
-        await self.authorization(address, conn)
+        client_data = self.clients[conn]
+        address = client_data['address']
+        if 'name' not in client_data:
+            await self.authorization(address, conn)
+            if conn not in self.clients:
+                return
+
         try:
             while True:
                 data = await self.loop.sock_recv(conn, 1024)
@@ -77,12 +73,6 @@ class Server:
             logging.warning(f"Client unexpectedly disconnected: {address}!")
 
     async def authorization(self, address, conn):
-        """
-        Authorize the user on the server
-        :param address: IP address and connection number
-        :param conn: Socket object
-        """
-
         name_user = None
 
         try:
@@ -95,6 +85,7 @@ class Server:
                         logging.info(f'User {name_user} found')
                     else:
                         raise ValueError
+
                     while True:
                         await conn.sendall(json.dumps(["passwd", "Enter your password"]).encode('utf-8'))
                         passwd = json.loads(await conn.recv(1024).decode('utf-8'))[1]
@@ -103,6 +94,7 @@ class Server:
                             logging.info(f'Password "{passwd}" is correct!')
                             await conn.sendall(json.dumps(["success", f"Welcome, {name_user}"]).encode('utf-8'))
 
+                            self.clients[conn]['name'] = name_user
                             break
                         else:
                             await conn.sendall(json.dumps(["passwd", "Incorrect password"]).encode('utf-8'))
@@ -110,45 +102,36 @@ class Server:
                     raise ValueError
             else:
                 raise ValueError
+
         except (json.decoder.JSONDecodeError, ValueError):
-            self.registration(address, conn, name_user)
+            await self.registration(address, conn, name_user)
 
     async def broadcast(self, message, conn, username):
-        """
-        Send data to client (message and user name with connection number)
-        :param messenger: message
-        :param conn: socket with data
-        :param username: client name
-        """
-        address = self.clients[conn]
+        client_data = self.clients[conn]
+        address = client_data['address']
         username += f"_{address[1]}"
-        for sock, addr in self.clients.items():
+        for sock, data in self.clients.items():
             if sock == conn:
                 continue
-            data = json.dumps(["message", message, username]).encode('utf-8')
-            await sock.sendall(data)
-            logging.info(f"Sending data to {address}: {message}")
+            addr = data['address']
+            response = json.dumps(["message", message, username]).encode('utf-8')
+            await sock.sendall(response)
+            logging.info(f"Sending data to {addr}: {message}")
 
     async def read_json(self):
-        """Read the file with authorized users"""
         async with aiofiles.open(self.users, 'r', encoding='utf-8') as file:
             users_text = await file.read()
         return json.loads(users_text)
 
     async def registration(self, address, conn, name):
-        """
-        Register new users and add information about them to the json file
-        Args:
-            :param address: IP address and connection number
-            :param conn: socket
-        """
-        await conn.sendall(pickle.dumps(["passwd", "Register a new user"]))
+        await conn.sendall(json.dumps(["passwd", "Register a new user"]).encode('utf-8'))
+
         if name is None:
-            await conn.sendall(pickle.dumps(["name", "Enter your username"]))
-            name = pickle.loads(await conn.recv(1024))[1]
-        await conn.sendall(pickle.dumps(["password", "Enter your password"]))
-        password = self.hash_generation(pickle.loads(await conn.recv(1024))[1])
-        await conn.sendall(pickle.dumps(["success", f"Welcome, {name}"]))
+            await conn.sendall(json.dumps(["name", "Enter your username"]).encode('utf-8'))
+            name = json.loads(await conn.recv(1024).decode('utf-8'))[1]
+        await conn.sendall(json.dumps(["password", "Enter your password"]).encode('utf-8'))
+        password = self.hash_generation(json.loads(await conn.recv(1024).decode('utf-8'))[1])
+        await conn.sendall(json.dumps(["success", f"Welcome, {name}"]).encode('utf-8'))
 
         if address[0] in self.users_authorization:
             self.users_authorization[address[0]].append({'name': name, 'password': password})
@@ -159,53 +142,24 @@ class Server:
         self.users_authorization = await self.read_json()
 
     async def write_json(self):
-        """
-        Write users to json file
-        """
         async with aiofiles.open(self.users, mode='w', encoding='utf-8') as file:
             await file.write(json.dumps(self.users_authorization, indent=4))
 
     def check_password(self, password, userpassword):
-        """
-        Check the password from the file and the one entered by the user
-        Args:
-            :param password: password entered by the user
-            :param userpassword: user password from json
-        returns:
-            boolean: True/False
-        """
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
         return key == userpassword
 
     async def check_name(self, name, username):
-        """
-        Compare the login from json to the one entered by the user
-        :param name: data from json file
-        :param username: user-entered login
-        :return:
-            boolean: True/False
-        """
         return name == username
 
     async def hash_generation(self, password):
-        """
-        Generate a password
-        Args:
-            password: password
-        returns:
-            str: password hash
-        """
 
         key = hashlib.md5(password.encode() + b'salt').hexdigest()
         return key
 
 
 async def main():
-    """
-    Check port validity
-    Start the server
-    """
-    port = "2002"
+    port = 2005
     IP = "127.0.0.1"
     if not await port_validation(port):
         if not await free_port(port):
@@ -224,8 +178,6 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
-
-
 
 # import asyncio
 # import queue
