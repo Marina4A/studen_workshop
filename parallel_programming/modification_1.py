@@ -40,4 +40,4 @@ if __name__ == '__main__':
         print('Matrices cannot be multiplied!')
     else:
         # перемножаем матрицы и записываем результат в файл
-        calc_matrix(matrix1, matrix2, num_processes, 'result.txt')
+        calc_matrix(matrix1, matrix2, num_processes, 'result1.txt')

@@ -45,4 +45,4 @@ if __name__ == '__main__':
         matrix_mult = calc_matrix(matrix1, matrix2)
 
         # записываем результат в файл
-        np.savetxt('result.txt', matrix_mult, fmt='%.2f')
+        np.savetxt('result2.txt', matrix_mult, fmt='%.2f')
