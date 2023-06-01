@@ -2,7 +2,6 @@ import os
 
 #from Crypto.Cipher import AES
 
-
 ### Функция шифрования и дешифрования текста обобщенным шифром Цезаря
 
 def caesar_cipher(text, shift, decrypt):
