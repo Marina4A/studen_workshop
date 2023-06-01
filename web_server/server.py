@@ -25,7 +25,7 @@ logger.addHandler(stream_handler)
 
 def read_config() -> dict:
     """Чтение настроек из файла yaml"""
-    with open("settings.yml", "r") as file:
+    with open("settings.yml", "r", encoding='utf-8') as file:
         return yaml.safe_load(file)
 
 
@@ -35,7 +35,7 @@ class BrowserRequest:
     def __init__(self, data: bytes):
         lines = []
         # Удаляем все пробелы с запроса браузера
-        for d in data.decode("utf8", "replace").split("\n"):
+        for d in data.decode("utf-8", "replace").split("\n"):
             line = d.strip()
             if line:
                 lines.append(line)
