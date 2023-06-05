@@ -147,7 +147,7 @@ class WebServer:
             "/": "index.html",
             "/index.html": "index.html",
             "/index": "index.html",
-            "/test": "cat.meow",
+            "/test": "program.html",
             "/image": "image.jpg"
         }
 
