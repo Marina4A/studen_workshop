@@ -1,0 +1,4 @@
+2023-12-03 19:17:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "CAR" не найдена
+Table "CAR" not found; SQL statement:
+insert into car (id, parent_id) values (0, 0); [42102-214]
