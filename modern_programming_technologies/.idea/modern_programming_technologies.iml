@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <datasource-map />
+        <naming-strategy-map />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/etc/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/bundles/templates/cfgxmlpar/org/hibernate/orm/test/jpa/pack/cfgxmlpar/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/java/org/hibernate/orm/test/boot/cfgXml/badnamespace.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/java/org/hibernate/orm/test/boot/cfgXml/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/java/org/hibernate/orm/test/cfg/cache/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/resources/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/resources/org/hibernate/jpa/test/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/resources/org/hibernate/orm/test/annotations/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/resources/org/hibernate/orm/test/bootstrap/jpa/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/hibernate-orm/hibernate-core/src/test/resources/org/hibernate/test/schematoolsnaming/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/out/production/hw3/com/company/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/hw3/src/com/company/hibernate.cfg.xml" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

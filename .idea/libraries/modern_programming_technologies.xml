@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="modern_programming_technologies">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/modern_programming_technologies/hw2.zip!/" />
+      <root url="jar://$PROJECT_DIR$/modern_programming_technologies/hw1.zip!/" />
+      <root url="jar://$PROJECT_DIR$/modern_programming_technologies/h2-2.1.214.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
