@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="548.0" prefWidth="422.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.marina.hw42.TreeViewController">
+  <padding>
+    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+  </padding>
+   <TreeView id="tree" fx:id="treeView" VBox.vgrow="ALWAYS" />
+   <Label fx:id="messageLine" />
+   <HBox alignment="CENTER" prefWidth="200.0" spacing="2.0">
+      <children>
+        <Button onAction="#onLoadTreesClick" text="Load trees" />
+         <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="Add" />
+         <TextField fx:id="nodeIdToInsertTextField" prefHeight="26.0" prefWidth="41.0" />
+         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteButtonAction" text="Delete" />
+      </children>
+
+      <padding>
+         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+      </padding>
+   </HBox>
+</VBox>
