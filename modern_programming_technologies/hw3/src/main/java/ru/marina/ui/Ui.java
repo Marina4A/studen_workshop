@@ -90,11 +90,6 @@ public class Ui {
             }
         });
 
-//        JScrollPane treeScrollPane = new JScrollPane();
-//        treeScrollPane.add(jTree);
-//        mainFramePanel.add(treeScrollPane, BorderLayout.CENTER);
-
-//        jTree.setRootVisible(false);
         mainFramePanel.add(jTree, BorderLayout.CENTER);
 
     }

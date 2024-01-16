@@ -106,7 +106,6 @@ public class Tree {
         for (Node n : node.getChildren()) {
             deleteNodeRecursive(n);
         }
-        //todo TreeDbHelper.deleteFromDB(node.getId());
     }
 
     public void delete(Node node) {
