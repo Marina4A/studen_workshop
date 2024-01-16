@@ -1,11 +1,11 @@
 package ru.marina;
 
-import ru.marina.tree.Node;
 import ru.marina.tree.Tree;
 import ru.marina.tree.TreeDbHelper;
 
-import java.io.*;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
     private static final String scvFileName = "output.csv";

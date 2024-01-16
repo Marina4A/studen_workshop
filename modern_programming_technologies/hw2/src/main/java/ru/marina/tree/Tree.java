@@ -6,10 +6,6 @@ import java.util.List;
 public class Tree {
     private final Node root = new Node(-1);
 
-    public Node getRoot() {
-        return root;
-    }
-
     public List<Node> getSubTrees() {
         return root.getChildren();
     }
@@ -29,26 +25,6 @@ public class Tree {
         for (Node c : n.getChildren()) {
             getLeavesRecursive(l, c);
         }
-    }
-
-    public List<Node> getAllNodes(Node subtree) {
-        List<Node> l = new ArrayList<>();
-        getNodesRecursive(l, subtree);
-        return l;
-    }
-
-    public List<Node> getAllNodes() {
-        List<Node> l = new ArrayList<>();
-        for (Node n : getSubTrees()) {
-            getNodesRecursive(l, n);
-        }
-        return l;
-    }
-
-    public List<Node> getAllLeaves(Node subtree) {
-        List<Node> l = new ArrayList<>();
-        getLeavesRecursive(l, subtree);
-        return l;
     }
 
     public List<Node> getAllLeaves() {
@@ -107,11 +83,6 @@ public class Tree {
             deleteNodeRecursive(n);
         }
         TreeDbHelper.deleteFromDB(node.getId());
-    }
-
-    public void delete(Node node) {
-        deleteNodeRecursive(node);
-        node.getParent().getChildren().remove(node);
     }
 
     @Override

@@ -4,36 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6bb78337-c0de-4cb0-984d-f33a1c6b9ac9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw1/HW1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1/HW1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/hw2.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/input.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/out/production/hw2/ru/trees/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/out/production/hw2/ru/trees/Node.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/out/production/hw2/ru/trees/Tree.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/output.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/output.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/src/ru/trees/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/src/ru/trees/Node.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/src/ru/trees/Tree.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/tree.mv.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw2/tree.trace.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw3.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/input.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/postgresql-42.2.27.jre6.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/s5779259.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Node.hbm.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Node.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Tree.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/hibernate.cfg.xml" beforeDir="false" />
-    </list>
+    <list default="true" id="6bb78337-c0de-4cb0-984d-f33a1c6b9ac9" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,24 +28,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "Maven.hw3 [clean].executor": "Run",
-    "Maven.hw3 [org.apache.maven.plugins:maven-assembly-plugin:3.4.0:single].executor": "Run",
-    "Maven.hw3 [package].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.hw3 [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.hw3 [org.apache.maven.plugins:maven-assembly-plugin:3.4.0:single].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.hw3 [package].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ru.marina.Main" />
@@ -111,6 +82,7 @@
       <option name="presentableId" value="Default" />
       <updated>1705142802839</updated>
       <workItem from="1705394032623" duration="17000" />
+      <workItem from="1705394503263" duration="18000" />
     </task>
     <servers />
   </component>

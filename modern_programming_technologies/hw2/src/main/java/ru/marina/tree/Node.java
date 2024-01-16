@@ -18,10 +18,6 @@ public class Node {
         return children.isEmpty();
     }
 
-    public boolean isRoot() {
-        return parent != null && parent.parent == null;
-    }
-
     public void add(int child) {
         for (Node n : children) {
             if (n.id == child) {

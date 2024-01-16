@@ -30,22 +30,6 @@ public class TreeDbHelper {
         }
     }
 
-    public static void addToDB(Node n) {
-        int id = n.getId();
-        int parent;
-
-        if (n.isRoot()) {
-            parent = id;
-        } else {
-            parent = n.getParent().getId();
-        }
-        try (DBConnection connection = new H2Connection()) {
-            connection.insertNode(id, parent);
-        } catch (SQLException e) {
-            System.out.println("Ошибка добавления узла " + id + " в таблицу: " + e.getMessage());
-        }
-    }
-
     public static void recreateDB() {
         try (DBConnection connection = new H2Connection()) {
             connection.dropSchema();
