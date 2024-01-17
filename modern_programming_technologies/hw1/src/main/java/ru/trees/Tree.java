@@ -3,42 +3,46 @@ package ru.trees;
 import java.util.ArrayList;
 import java.util.List;
 
-class Tree {
+public class Tree {
     private Node root;
-
-    public Tree(Node root) {
-        this.root = root;
-    }
 
     public Node getRoot() {
         return root;
     }
 
-    public List<Node> getAllNodes() {
-        List<Node> nodes = new ArrayList<>();
-        traverse(root, nodes);
-        return nodes;
+    public void setRoot(Node root) {
+        this.root = root;
     }
 
-    private void traverse(Node node, List<Node> nodes) {
-        nodes.add(node);
+    public List<Node> getAllNodes() {
+        List<Node> result = new ArrayList<>();
+        traverse(root, result);
+        return result;
+    }
+
+    public List<Node> getLeaves() {
+        List<Node> result = new ArrayList<>();
+        traverseLeaves(root, result);
+        return result;
+    }
+
+    public int countLeaves() {
+        return getLeaves().size();
+    }
+
+    private void traverse(Node node, List<Node> result) {
+        result.add(node);
         for (Node child : node.getChildren()) {
-            traverse(child, nodes);
+            traverse(child, result);
         }
     }
 
-    public List<Node> getAllLeaves() {
-        List<Node> leaves = new ArrayList<>();
-        traverseLeaves(root, leaves);
-        return leaves;
-    }
-
-    private void traverseLeaves(Node node, List<Node> leaves) {
+    private void traverseLeaves(Node node, List<Node> result) {
         if (node.isLeaf()) {
-            leaves.add(node);
+            result.add(node);
         } else {
             for (Node child : node.getChildren()) {
-                traverseLeaves(child, leaves);
+                traverseLeaves(child, result);
             }
         }
     }

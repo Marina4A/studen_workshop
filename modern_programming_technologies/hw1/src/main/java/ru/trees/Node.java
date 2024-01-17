@@ -3,14 +3,14 @@ package ru.trees;
 import java.util.ArrayList;
 import java.util.List;
 
-class Node {
+public class Node {
     private int id;
     private Node parent;
     private List<Node> children;
 
     public Node(int id) {
         this.id = id;
-        this.children = new ArrayList<>();
+        children = new ArrayList<>();
     }
 
     public int getId() {
