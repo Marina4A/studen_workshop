@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6bb78337-c0de-4cb0-984d-f33a1c6b9ac9" name="Changes" comment="Оптимизировала код">
+      <change beforePath="$PROJECT_DIR$/../hw1.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw1/src/main/java/ru/trees/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1/src/main/java/ru/trees/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -99,6 +101,7 @@
       <workItem from="1705394503263" duration="18000" />
       <workItem from="1705395012609" duration="476000" />
       <workItem from="1705403012964" duration="489000" />
+      <workItem from="1705591600382" duration="803000" />
     </task>
     <task id="LOCAL-00001" summary="Оптимизировала код">
       <option name="closed" value="true" />

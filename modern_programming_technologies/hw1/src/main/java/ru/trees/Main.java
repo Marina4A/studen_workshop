@@ -27,7 +27,8 @@ public class Main {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             return reader.lines()
                     .map(line -> line.split(","))
-                    .map(parts -> new int[]{Integer.parseInt(parts[0].replace("\"", "")), Integer.parseInt(parts[1].replace("\"", ""))})
+                    .map(parts -> new int[]{Integer.parseInt(parts[0].replace("\"", "")),
+                            Integer.parseInt(parts[1].replace("\"", ""))})
                     .toList();
         }
     }
