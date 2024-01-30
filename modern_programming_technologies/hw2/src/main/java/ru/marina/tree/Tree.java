@@ -10,13 +10,6 @@ public class Tree {
         return root.getChildren();
     }
 
-    private void getNodesRecursive(List<Node> l, Node r) {
-        l.add(r);
-        for (Node n : r.getChildren()) {
-            getNodesRecursive(l, n);
-        }
-    }
-
     private void getLeavesRecursive(List<Node> l, Node n) {
         if (n.isLeaf()) {
             l.add(n);

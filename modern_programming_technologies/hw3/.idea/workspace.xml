@@ -5,9 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6bb78337-c0de-4cb0-984d-f33a1c6b9ac9" name="Changes" comment="Оптимизировала код">
-      <change beforePath="$PROJECT_DIR$/../hw1.zip" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hw1/src/main/java/ru/trees/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1/src/main/java/ru/trees/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/output.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/Graph.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/Node.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/connection/DBConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/connection/H2Connection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2.1/src/main/java/org/example/connection/PostgresConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hw2/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw1/hw1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../hw1/hw1.1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/output.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/db/entities/NodeEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/db/entities/NodeEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/tree/Tree.java" beforeDir="false" afterPath="$PROJECT_DIR$/../hw2/src/main/java/ru/marina/tree/Tree.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw4/hw41/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../hw4/hw41/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw4/hw42/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw4/hw42/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hw4/hw42/target/classes/ru/marina/hw42/TreeViewController.class" beforeDir="false" afterPath="$PROJECT_DIR$/../hw4/hw42/target/classes/ru/marina/hw42/TreeViewController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,13 +75,14 @@
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ru.marina.Main" />
       <module name="hw3" />
@@ -76,9 +96,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="hw3-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/hw3-1.0-SNAPSHOT.jar" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="JAR Application.hw3-1.0-SNAPSHOT.jar" />
       </list>
     </recent_temporary>
   </component>
@@ -102,6 +127,12 @@
       <workItem from="1705395012609" duration="476000" />
       <workItem from="1705403012964" duration="489000" />
       <workItem from="1705591600382" duration="803000" />
+      <workItem from="1706092306164" duration="105000" />
+      <workItem from="1706094245866" duration="201000" />
+      <workItem from="1706119965192" duration="79000" />
+      <workItem from="1706120657240" duration="87000" />
+      <workItem from="1706559013456" duration="775000" />
+      <workItem from="1706595751572" duration="312000" />
     </task>
     <task id="LOCAL-00001" summary="Оптимизировала код">
       <option name="closed" value="true" />

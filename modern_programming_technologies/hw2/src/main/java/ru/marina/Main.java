@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+
 public class Main {
     private static final String scvFileName = "output.csv";
 
